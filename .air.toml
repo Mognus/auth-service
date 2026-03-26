@@ -1,0 +1,10 @@
+[build]
+  cmd = "go build -o ./tmp/main ./cmd/server/main.go"
+  bin = "./tmp/main"
+  full_bin = "./tmp/main"
+  include_ext = ["go"]
+  exclude_dir = ["tmp", "gen"]
+  delay = 1000
+
+[log]
+  time = false
