@@ -2,7 +2,13 @@ FROM golang:1.26-alpine
 
 RUN go install github.com/air-verse/air@latest
 
-WORKDIR /app
+# Copy local replace directive target before go mod download —
+# go.mod references go-grpc-crud via a replace directive pointing to ../lib.
+# WORKDIR mirrors the local path (services/auth-service/) so that ../lib
+# resolves to /services/lib/ inside the container, matching the replace directive.
+COPY services/lib/ /services/lib/
+
+WORKDIR /services/auth-service
 
 COPY services/auth-service/go.mod services/auth-service/go.sum* ./
 

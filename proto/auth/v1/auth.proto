@@ -59,10 +59,8 @@ message ListUsersRequest {
   int32               limit      = 2;
   string              search     = 3;
   map<string, string> filters    = 4;
-  uint64              role_id    = 5;
-  optional bool       active     = 6;
-  string              sort_by    = 7;
-  string              sort_order = 8;
+  string              sort_by    = 5;
+  string              sort_order = 6;
 }
 
 message ListUsersResponse {
