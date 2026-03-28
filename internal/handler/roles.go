@@ -14,7 +14,7 @@ import (
 	"gorm.io/gorm"
 )
 
-var roleListCfg = grpccrud.ListConfig{
+var roleListConfig = grpccrud.ListConfig{
 	Searchable:      []string{"name"},
 	SortableColumns: []string{"id", "name", "created_at", "updated_at"},
 	DefaultSort:     "id ASC",
@@ -35,13 +35,13 @@ func (h *Handler) ListRoles(ctx context.Context, req *authv1.ListRolesRequest) (
 	roles, total, err := grpccrud.DefaultList[model.Role](ctx, h.db, grpccrud.ListRequest{
 		Page: req.Page, Limit: req.Limit, Search: req.Search,
 		Filters: req.Filters, SortBy: req.SortBy, SortOrder: req.SortOrder,
-	}, roleListCfg)
+	}, roleListConfig)
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 	resp := &authv1.ListRolesResponse{Total: total, Roles: make([]*authv1.RoleResponse, len(roles))}
-	for i := range roles {
-		resp.Roles[i] = toRoleResponse(&roles[i])
+	for i, r := range roles {
+		resp.Roles[i] = toRoleResponse(&r)
 	}
 	return resp, nil
 }

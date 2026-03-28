@@ -4,6 +4,7 @@ import (
 	"log"
 	"net"
 	"os"
+	"time"
 
 	authv1 "auth-service/gen/auth/v1"
 	"auth-service/internal/db"
@@ -22,7 +23,7 @@ func main() {
 		log.Fatalf("failed to connect to database: %v", err)
 	}
 
-	if err := database.AutoMigrate(&model.Role{}, &model.User{}); err != nil {
+	if err := database.AutoMigrate(&model.Role{}, &model.User{}, &model.RefreshToken{}); err != nil {
 		log.Fatalf("failed to migrate: %v", err)
 	}
 
@@ -35,13 +36,22 @@ func main() {
 		log.Fatal("JWT_SECRET is required")
 	}
 
+	accessTTL, err := time.ParseDuration(os.Getenv("JWT_ACCESS_TTL"))
+	if err != nil {
+		accessTTL = 15 * time.Minute
+	}
+	refreshTTL, err := time.ParseDuration(os.Getenv("JWT_REFRESH_TTL"))
+	if err != nil {
+		refreshTTL = 7 * 24 * time.Hour
+	}
+
 	lis, err := net.Listen("tcp", ":50051")
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
 	s := grpc.NewServer()
-	authv1.RegisterAuthServiceServer(s, handler.New(database, jwtSecret))
+	authv1.RegisterAuthServiceServer(s, handler.New(database, jwtSecret, accessTTL, refreshTTL))
 
 	log.Println("auth-service listening on :50051")
 	if err := s.Serve(lis); err != nil {

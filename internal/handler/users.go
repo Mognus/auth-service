@@ -14,7 +14,7 @@ import (
 	"gorm.io/gorm"
 )
 
-var userListCfg = grpccrud.ListConfig{
+var userListConfig = grpccrud.ListConfig{
 	Preloads:        []string{"Role"},
 	Searchable:      []string{"email", "first_name", "last_name"},
 	SortableColumns: []string{"id", "email", "first_name", "last_name", "created_at", "updated_at", "active"},
@@ -36,13 +36,13 @@ func (h *Handler) ListUsers(ctx context.Context, req *authv1.ListUsersRequest) (
 	users, total, err := grpccrud.DefaultList[model.User](ctx, h.db, grpccrud.ListRequest{
 		Page: req.Page, Limit: req.Limit, Search: req.Search,
 		Filters: req.Filters, SortBy: req.SortBy, SortOrder: req.SortOrder,
-	}, userListCfg)
+	}, userListConfig)
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 	resp := &authv1.ListUsersResponse{Total: total, Users: make([]*authv1.UserResponse, len(users))}
-	for i := range users {
-		resp.Users[i] = toUserResponse(&users[i])
+	for i, u := range users {
+		resp.Users[i] = toUserResponse(&u)
 	}
 	return resp, nil
 }
