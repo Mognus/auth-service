@@ -20,8 +20,8 @@ var roleListCfg = grpccrud.ListConfig{
 	DefaultSort:     "id ASC",
 }
 
-func (h *Handler) GetRole(_ context.Context, req *authv1.GetRoleRequest) (*authv1.GetRoleResponse, error) {
-	role, err := grpccrud.DefaultGet[model.Role](h.db, req.Id)
+func (h *Handler) GetRole(ctx context.Context, req *authv1.GetRoleRequest) (*authv1.GetRoleResponse, error) {
+	role, err := grpccrud.DefaultGet[model.Role](ctx, h.db, req.Id)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, status.Error(codes.NotFound, "role not found")
@@ -31,8 +31,8 @@ func (h *Handler) GetRole(_ context.Context, req *authv1.GetRoleRequest) (*authv
 	return &authv1.GetRoleResponse{Role: toRoleResponse(&role)}, nil
 }
 
-func (h *Handler) ListRoles(_ context.Context, req *authv1.ListRolesRequest) (*authv1.ListRolesResponse, error) {
-	roles, total, err := grpccrud.DefaultList[model.Role](h.db, grpccrud.ListRequest{
+func (h *Handler) ListRoles(ctx context.Context, req *authv1.ListRolesRequest) (*authv1.ListRolesResponse, error) {
+	roles, total, err := grpccrud.DefaultList[model.Role](ctx, h.db, grpccrud.ListRequest{
 		Page: req.Page, Limit: req.Limit, Search: req.Search,
 		Filters: req.Filters, SortBy: req.SortBy, SortOrder: req.SortOrder,
 	}, roleListCfg)
@@ -46,16 +46,16 @@ func (h *Handler) ListRoles(_ context.Context, req *authv1.ListRolesRequest) (*a
 	return resp, nil
 }
 
-func (h *Handler) CreateRole(_ context.Context, req *authv1.CreateRoleRequest) (*authv1.CreateRoleResponse, error) {
-	role, err := grpccrud.DefaultCreate(h.db, &model.Role{Name: req.Name})
+func (h *Handler) CreateRole(ctx context.Context, req *authv1.CreateRoleRequest) (*authv1.CreateRoleResponse, error) {
+	role, err := grpccrud.DefaultCreate(ctx, h.db, &model.Role{Name: req.Name})
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 	return &authv1.CreateRoleResponse{Role: toRoleResponse(role)}, nil
 }
 
-func (h *Handler) UpdateRole(_ context.Context, req *authv1.UpdateRoleRequest) (*authv1.UpdateRoleResponse, error) {
-	role, err := grpccrud.DefaultUpdate[model.Role](h.db, req.Id, map[string]any{"name": req.Name})
+func (h *Handler) UpdateRole(ctx context.Context, req *authv1.UpdateRoleRequest) (*authv1.UpdateRoleResponse, error) {
+	role, err := grpccrud.DefaultUpdate[model.Role](ctx, h.db, req.Id, map[string]any{"name": req.Name})
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, status.Error(codes.NotFound, "role not found")
@@ -65,8 +65,8 @@ func (h *Handler) UpdateRole(_ context.Context, req *authv1.UpdateRoleRequest) (
 	return &authv1.UpdateRoleResponse{Role: toRoleResponse(role)}, nil
 }
 
-func (h *Handler) DeleteRole(_ context.Context, req *authv1.DeleteRoleRequest) (*authv1.DeleteRoleResponse, error) {
-	if err := grpccrud.DefaultDelete(h.db, &model.Role{}, req.Id); err != nil {
+func (h *Handler) DeleteRole(ctx context.Context, req *authv1.DeleteRoleRequest) (*authv1.DeleteRoleResponse, error) {
+	if err := grpccrud.DefaultDelete(ctx, h.db, &model.Role{}, req.Id); err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 	return &authv1.DeleteRoleResponse{Success: true}, nil

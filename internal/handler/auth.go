@@ -23,9 +23,9 @@ func New(db *gorm.DB, jwtSecret string) *Handler {
 	return &Handler{db: db, jwtSecret: jwtSecret}
 }
 
-func (h *Handler) Login(_ context.Context, req *authv1.LoginRequest) (*authv1.LoginResponse, error) {
+func (h *Handler) Login(ctx context.Context, req *authv1.LoginRequest) (*authv1.LoginResponse, error) {
 	var user model.User
-	if err := h.db.Preload("Role").Where("email = ?", req.Email).First(&user).Error; err != nil {
+	if err := h.db.WithContext(ctx).Preload("Role").Where("email = ?", req.Email).First(&user).Error; err != nil {
 		return nil, status.Error(codes.Unauthenticated, "invalid email or password")
 	}
 	if !user.Active {
@@ -41,9 +41,9 @@ func (h *Handler) Login(_ context.Context, req *authv1.LoginRequest) (*authv1.Lo
 	return &authv1.LoginResponse{Token: token, User: toUserResponse(&user)}, nil
 }
 
-func (h *Handler) Register(_ context.Context, req *authv1.RegisterRequest) (*authv1.RegisterResponse, error) {
+func (h *Handler) Register(ctx context.Context, req *authv1.RegisterRequest) (*authv1.RegisterResponse, error) {
 	var existing model.User
-	if err := h.db.Where("email = ?", req.Email).First(&existing).Error; err == nil {
+	if err := h.db.WithContext(ctx).Where("email = ?", req.Email).First(&existing).Error; err == nil {
 		return nil, status.Error(codes.AlreadyExists, "user with this email already exists")
 	}
 	if len(req.Password) < 8 {
@@ -51,7 +51,7 @@ func (h *Handler) Register(_ context.Context, req *authv1.RegisterRequest) (*aut
 	}
 
 	var defaultRole model.Role
-	if err := h.db.Where("name = ?", string(model.RoleUser)).First(&defaultRole).Error; err != nil {
+	if err := h.db.WithContext(ctx).Where("name = ?", string(model.RoleUser)).First(&defaultRole).Error; err != nil {
 		return nil, status.Error(codes.Internal, "failed to find default role")
 	}
 
@@ -63,7 +63,7 @@ func (h *Handler) Register(_ context.Context, req *authv1.RegisterRequest) (*aut
 		RoleID:    defaultRole.ID,
 		Active:    true,
 	}
-	if err := h.db.Create(&user).Error; err != nil {
+	if err := h.db.WithContext(ctx).Create(&user).Error; err != nil {
 		return nil, status.Error(codes.Internal, "failed to create user")
 	}
 	user.Role = defaultRole

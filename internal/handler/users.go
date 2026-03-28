@@ -21,8 +21,8 @@ var userListCfg = grpccrud.ListConfig{
 	DefaultSort:     "id ASC",
 }
 
-func (h *Handler) GetUser(_ context.Context, req *authv1.GetUserRequest) (*authv1.GetUserResponse, error) {
-	user, err := grpccrud.DefaultGet[model.User](h.db, req.Id, "Role")
+func (h *Handler) GetUser(ctx context.Context, req *authv1.GetUserRequest) (*authv1.GetUserResponse, error) {
+	user, err := grpccrud.DefaultGet[model.User](ctx, h.db, req.Id, "Role")
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, status.Error(codes.NotFound, "user not found")
@@ -32,8 +32,8 @@ func (h *Handler) GetUser(_ context.Context, req *authv1.GetUserRequest) (*authv
 	return &authv1.GetUserResponse{User: toUserResponse(&user)}, nil
 }
 
-func (h *Handler) ListUsers(_ context.Context, req *authv1.ListUsersRequest) (*authv1.ListUsersResponse, error) {
-	users, total, err := grpccrud.DefaultList[model.User](h.db, grpccrud.ListRequest{
+func (h *Handler) ListUsers(ctx context.Context, req *authv1.ListUsersRequest) (*authv1.ListUsersResponse, error) {
+	users, total, err := grpccrud.DefaultList[model.User](ctx, h.db, grpccrud.ListRequest{
 		Page: req.Page, Limit: req.Limit, Search: req.Search,
 		Filters: req.Filters, SortBy: req.SortBy, SortOrder: req.SortOrder,
 	}, userListCfg)
@@ -47,8 +47,8 @@ func (h *Handler) ListUsers(_ context.Context, req *authv1.ListUsersRequest) (*a
 	return resp, nil
 }
 
-func (h *Handler) CreateUser(_ context.Context, req *authv1.CreateUserRequest) (*authv1.CreateUserResponse, error) {
-	user, err := grpccrud.DefaultCreate(h.db, &model.User{
+func (h *Handler) CreateUser(ctx context.Context, req *authv1.CreateUserRequest) (*authv1.CreateUserResponse, error) {
+	user, err := grpccrud.DefaultCreate(ctx, h.db, &model.User{
 		Email:     req.Email,
 		Password:  req.Password,
 		FirstName: req.FirstName,
@@ -62,7 +62,7 @@ func (h *Handler) CreateUser(_ context.Context, req *authv1.CreateUserRequest) (
 	return &authv1.CreateUserResponse{User: toUserResponse(user)}, nil
 }
 
-func (h *Handler) UpdateUser(_ context.Context, req *authv1.UpdateUserRequest) (*authv1.UpdateUserResponse, error) {
+func (h *Handler) UpdateUser(ctx context.Context, req *authv1.UpdateUserRequest) (*authv1.UpdateUserResponse, error) {
 	updates := map[string]any{
 		"email":      req.Email,
 		"first_name": req.FirstName,
@@ -73,7 +73,7 @@ func (h *Handler) UpdateUser(_ context.Context, req *authv1.UpdateUserRequest) (
 	if req.Password != "" {
 		updates["password"] = req.Password
 	}
-	user, err := grpccrud.DefaultUpdate[model.User](h.db, req.Id, updates, "Role")
+	user, err := grpccrud.DefaultUpdate[model.User](ctx, h.db, req.Id, updates, "Role")
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, status.Error(codes.NotFound, "user not found")
@@ -83,8 +83,8 @@ func (h *Handler) UpdateUser(_ context.Context, req *authv1.UpdateUserRequest) (
 	return &authv1.UpdateUserResponse{User: toUserResponse(user)}, nil
 }
 
-func (h *Handler) DeleteUser(_ context.Context, req *authv1.DeleteUserRequest) (*authv1.DeleteUserResponse, error) {
-	if err := grpccrud.DefaultDelete(h.db, &model.User{}, req.Id); err != nil {
+func (h *Handler) DeleteUser(ctx context.Context, req *authv1.DeleteUserRequest) (*authv1.DeleteUserResponse, error) {
+	if err := grpccrud.DefaultDelete(ctx, h.db, &model.User{}, req.Id); err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 	return &authv1.DeleteUserResponse{Success: true}, nil
