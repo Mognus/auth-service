@@ -294,8 +294,11 @@ type ListUsersRequest struct {
 	Page          int32                  `protobuf:"varint,1,opt,name=page,proto3" json:"page,omitempty"`
 	Limit         int32                  `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"`
 	Search        string                 `protobuf:"bytes,3,opt,name=search,proto3" json:"search,omitempty"`
-	RoleId        uint64                 `protobuf:"varint,4,opt,name=role_id,json=roleId,proto3" json:"role_id,omitempty"`
-	Active        *bool                  `protobuf:"varint,5,opt,name=active,proto3,oneof" json:"active,omitempty"`
+	Filters       map[string]string      `protobuf:"bytes,4,rep,name=filters,proto3" json:"filters,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	RoleId        uint64                 `protobuf:"varint,5,opt,name=role_id,json=roleId,proto3" json:"role_id,omitempty"`
+	Active        *bool                  `protobuf:"varint,6,opt,name=active,proto3,oneof" json:"active,omitempty"`
+	SortBy        string                 `protobuf:"bytes,7,opt,name=sort_by,json=sortBy,proto3" json:"sort_by,omitempty"`
+	SortOrder     string                 `protobuf:"bytes,8,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -351,6 +354,13 @@ func (x *ListUsersRequest) GetSearch() string {
 	return ""
 }
 
+func (x *ListUsersRequest) GetFilters() map[string]string {
+	if x != nil {
+		return x.Filters
+	}
+	return nil
+}
+
 func (x *ListUsersRequest) GetRoleId() uint64 {
 	if x != nil {
 		return x.RoleId
@@ -363,6 +373,20 @@ func (x *ListUsersRequest) GetActive() bool {
 		return *x.Active
 	}
 	return false
+}
+
+func (x *ListUsersRequest) GetSortBy() string {
+	if x != nil {
+		return x.SortBy
+	}
+	return ""
+}
+
+func (x *ListUsersRequest) GetSortOrder() string {
+	if x != nil {
+		return x.SortOrder
+	}
+	return ""
 }
 
 type ListUsersResponse struct {
@@ -970,6 +994,9 @@ type ListRolesRequest struct {
 	Page          int32                  `protobuf:"varint,1,opt,name=page,proto3" json:"page,omitempty"`
 	Limit         int32                  `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"`
 	Search        string                 `protobuf:"bytes,3,opt,name=search,proto3" json:"search,omitempty"`
+	Filters       map[string]string      `protobuf:"bytes,4,rep,name=filters,proto3" json:"filters,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	SortBy        string                 `protobuf:"bytes,5,opt,name=sort_by,json=sortBy,proto3" json:"sort_by,omitempty"`
+	SortOrder     string                 `protobuf:"bytes,6,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1021,6 +1048,27 @@ func (x *ListRolesRequest) GetLimit() int32 {
 func (x *ListRolesRequest) GetSearch() string {
 	if x != nil {
 		return x.Search
+	}
+	return ""
+}
+
+func (x *ListRolesRequest) GetFilters() map[string]string {
+	if x != nil {
+		return x.Filters
+	}
+	return nil
+}
+
+func (x *ListRolesRequest) GetSortBy() string {
+	if x != nil {
+		return x.SortBy
+	}
+	return ""
+}
+
+func (x *ListRolesRequest) GetSortOrder() string {
+	if x != nil {
+		return x.SortOrder
 	}
 	return ""
 }
@@ -1482,13 +1530,20 @@ const file_auth_v1_auth_proto_rawDesc = "" +
 	"\x05token\x18\x01 \x01(\tR\x05token\x12)\n" +
 	"\x04user\x18\x02 \x01(\v2\x15.auth.v1.UserResponseR\x04user\" \n" +
 	"\x0eGetUserRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\"\x95\x01\n" +
+	"\x02id\x18\x01 \x01(\x04R\x02id\"\xcb\x02\n" +
 	"\x10ListUsersRequest\x12\x12\n" +
 	"\x04page\x18\x01 \x01(\x05R\x04page\x12\x14\n" +
 	"\x05limit\x18\x02 \x01(\x05R\x05limit\x12\x16\n" +
-	"\x06search\x18\x03 \x01(\tR\x06search\x12\x17\n" +
-	"\arole_id\x18\x04 \x01(\x04R\x06roleId\x12\x1b\n" +
-	"\x06active\x18\x05 \x01(\bH\x00R\x06active\x88\x01\x01B\t\n" +
+	"\x06search\x18\x03 \x01(\tR\x06search\x12@\n" +
+	"\afilters\x18\x04 \x03(\v2&.auth.v1.ListUsersRequest.FiltersEntryR\afilters\x12\x17\n" +
+	"\arole_id\x18\x05 \x01(\x04R\x06roleId\x12\x1b\n" +
+	"\x06active\x18\x06 \x01(\bH\x00R\x06active\x88\x01\x01\x12\x17\n" +
+	"\asort_by\x18\a \x01(\tR\x06sortBy\x12\x1d\n" +
+	"\n" +
+	"sort_order\x18\b \x01(\tR\tsortOrder\x1a:\n" +
+	"\fFiltersEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01B\t\n" +
 	"\a_active\"V\n" +
 	"\x11ListUsersResponse\x12+\n" +
 	"\x05users\x18\x01 \x03(\v2\x15.auth.v1.UserResponseR\x05users\x12\x14\n" +
@@ -1534,11 +1589,18 @@ const file_auth_v1_auth_proto_rawDesc = "" +
 	"\n" +
 	"updated_at\x18\t \x01(\tR\tupdatedAt\" \n" +
 	"\x0eGetRoleRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\"T\n" +
+	"\x02id\x18\x01 \x01(\x04R\x02id\"\x8a\x02\n" +
 	"\x10ListRolesRequest\x12\x12\n" +
 	"\x04page\x18\x01 \x01(\x05R\x04page\x12\x14\n" +
 	"\x05limit\x18\x02 \x01(\x05R\x05limit\x12\x16\n" +
-	"\x06search\x18\x03 \x01(\tR\x06search\"V\n" +
+	"\x06search\x18\x03 \x01(\tR\x06search\x12@\n" +
+	"\afilters\x18\x04 \x03(\v2&.auth.v1.ListRolesRequest.FiltersEntryR\afilters\x12\x17\n" +
+	"\asort_by\x18\x05 \x01(\tR\x06sortBy\x12\x1d\n" +
+	"\n" +
+	"sort_order\x18\x06 \x01(\tR\tsortOrder\x1a:\n" +
+	"\fFiltersEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"V\n" +
 	"\x11ListRolesResponse\x12+\n" +
 	"\x05roles\x18\x01 \x03(\v2\x15.auth.v1.RoleResponseR\x05roles\x12\x14\n" +
 	"\x05total\x18\x02 \x01(\x03R\x05total\"'\n" +
@@ -1596,7 +1658,7 @@ func file_auth_v1_auth_proto_rawDescGZIP() []byte {
 	return file_auth_v1_auth_proto_rawDescData
 }
 
-var file_auth_v1_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 26)
+var file_auth_v1_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 28)
 var file_auth_v1_auth_proto_goTypes = []any{
 	(*LoginRequest)(nil),       // 0: auth.v1.LoginRequest
 	(*LoginResponse)(nil),      // 1: auth.v1.LoginResponse
@@ -1624,48 +1686,52 @@ var file_auth_v1_auth_proto_goTypes = []any{
 	(*UpdateRoleResponse)(nil), // 23: auth.v1.UpdateRoleResponse
 	(*DeleteRoleResponse)(nil), // 24: auth.v1.DeleteRoleResponse
 	(*RoleResponse)(nil),       // 25: auth.v1.RoleResponse
+	nil,                        // 26: auth.v1.ListUsersRequest.FiltersEntry
+	nil,                        // 27: auth.v1.ListRolesRequest.FiltersEntry
 }
 var file_auth_v1_auth_proto_depIdxs = []int32{
 	14, // 0: auth.v1.LoginResponse.user:type_name -> auth.v1.UserResponse
 	14, // 1: auth.v1.RegisterResponse.user:type_name -> auth.v1.UserResponse
-	14, // 2: auth.v1.ListUsersResponse.users:type_name -> auth.v1.UserResponse
-	14, // 3: auth.v1.GetUserResponse.user:type_name -> auth.v1.UserResponse
-	14, // 4: auth.v1.CreateUserResponse.user:type_name -> auth.v1.UserResponse
-	14, // 5: auth.v1.UpdateUserResponse.user:type_name -> auth.v1.UserResponse
-	25, // 6: auth.v1.UserResponse.role:type_name -> auth.v1.RoleResponse
-	25, // 7: auth.v1.ListRolesResponse.roles:type_name -> auth.v1.RoleResponse
-	25, // 8: auth.v1.GetRoleResponse.role:type_name -> auth.v1.RoleResponse
-	25, // 9: auth.v1.CreateRoleResponse.role:type_name -> auth.v1.RoleResponse
-	25, // 10: auth.v1.UpdateRoleResponse.role:type_name -> auth.v1.RoleResponse
-	0,  // 11: auth.v1.AuthService.Login:input_type -> auth.v1.LoginRequest
-	2,  // 12: auth.v1.AuthService.Register:input_type -> auth.v1.RegisterRequest
-	4,  // 13: auth.v1.AuthService.GetUser:input_type -> auth.v1.GetUserRequest
-	5,  // 14: auth.v1.AuthService.ListUsers:input_type -> auth.v1.ListUsersRequest
-	7,  // 15: auth.v1.AuthService.CreateUser:input_type -> auth.v1.CreateUserRequest
-	8,  // 16: auth.v1.AuthService.UpdateUser:input_type -> auth.v1.UpdateUserRequest
-	9,  // 17: auth.v1.AuthService.DeleteUser:input_type -> auth.v1.DeleteUserRequest
-	15, // 18: auth.v1.AuthService.GetRole:input_type -> auth.v1.GetRoleRequest
-	16, // 19: auth.v1.AuthService.ListRoles:input_type -> auth.v1.ListRolesRequest
-	18, // 20: auth.v1.AuthService.CreateRole:input_type -> auth.v1.CreateRoleRequest
-	19, // 21: auth.v1.AuthService.UpdateRole:input_type -> auth.v1.UpdateRoleRequest
-	20, // 22: auth.v1.AuthService.DeleteRole:input_type -> auth.v1.DeleteRoleRequest
-	1,  // 23: auth.v1.AuthService.Login:output_type -> auth.v1.LoginResponse
-	3,  // 24: auth.v1.AuthService.Register:output_type -> auth.v1.RegisterResponse
-	10, // 25: auth.v1.AuthService.GetUser:output_type -> auth.v1.GetUserResponse
-	6,  // 26: auth.v1.AuthService.ListUsers:output_type -> auth.v1.ListUsersResponse
-	11, // 27: auth.v1.AuthService.CreateUser:output_type -> auth.v1.CreateUserResponse
-	12, // 28: auth.v1.AuthService.UpdateUser:output_type -> auth.v1.UpdateUserResponse
-	13, // 29: auth.v1.AuthService.DeleteUser:output_type -> auth.v1.DeleteUserResponse
-	21, // 30: auth.v1.AuthService.GetRole:output_type -> auth.v1.GetRoleResponse
-	17, // 31: auth.v1.AuthService.ListRoles:output_type -> auth.v1.ListRolesResponse
-	22, // 32: auth.v1.AuthService.CreateRole:output_type -> auth.v1.CreateRoleResponse
-	23, // 33: auth.v1.AuthService.UpdateRole:output_type -> auth.v1.UpdateRoleResponse
-	24, // 34: auth.v1.AuthService.DeleteRole:output_type -> auth.v1.DeleteRoleResponse
-	23, // [23:35] is the sub-list for method output_type
-	11, // [11:23] is the sub-list for method input_type
-	11, // [11:11] is the sub-list for extension type_name
-	11, // [11:11] is the sub-list for extension extendee
-	0,  // [0:11] is the sub-list for field type_name
+	26, // 2: auth.v1.ListUsersRequest.filters:type_name -> auth.v1.ListUsersRequest.FiltersEntry
+	14, // 3: auth.v1.ListUsersResponse.users:type_name -> auth.v1.UserResponse
+	14, // 4: auth.v1.GetUserResponse.user:type_name -> auth.v1.UserResponse
+	14, // 5: auth.v1.CreateUserResponse.user:type_name -> auth.v1.UserResponse
+	14, // 6: auth.v1.UpdateUserResponse.user:type_name -> auth.v1.UserResponse
+	25, // 7: auth.v1.UserResponse.role:type_name -> auth.v1.RoleResponse
+	27, // 8: auth.v1.ListRolesRequest.filters:type_name -> auth.v1.ListRolesRequest.FiltersEntry
+	25, // 9: auth.v1.ListRolesResponse.roles:type_name -> auth.v1.RoleResponse
+	25, // 10: auth.v1.GetRoleResponse.role:type_name -> auth.v1.RoleResponse
+	25, // 11: auth.v1.CreateRoleResponse.role:type_name -> auth.v1.RoleResponse
+	25, // 12: auth.v1.UpdateRoleResponse.role:type_name -> auth.v1.RoleResponse
+	0,  // 13: auth.v1.AuthService.Login:input_type -> auth.v1.LoginRequest
+	2,  // 14: auth.v1.AuthService.Register:input_type -> auth.v1.RegisterRequest
+	4,  // 15: auth.v1.AuthService.GetUser:input_type -> auth.v1.GetUserRequest
+	5,  // 16: auth.v1.AuthService.ListUsers:input_type -> auth.v1.ListUsersRequest
+	7,  // 17: auth.v1.AuthService.CreateUser:input_type -> auth.v1.CreateUserRequest
+	8,  // 18: auth.v1.AuthService.UpdateUser:input_type -> auth.v1.UpdateUserRequest
+	9,  // 19: auth.v1.AuthService.DeleteUser:input_type -> auth.v1.DeleteUserRequest
+	15, // 20: auth.v1.AuthService.GetRole:input_type -> auth.v1.GetRoleRequest
+	16, // 21: auth.v1.AuthService.ListRoles:input_type -> auth.v1.ListRolesRequest
+	18, // 22: auth.v1.AuthService.CreateRole:input_type -> auth.v1.CreateRoleRequest
+	19, // 23: auth.v1.AuthService.UpdateRole:input_type -> auth.v1.UpdateRoleRequest
+	20, // 24: auth.v1.AuthService.DeleteRole:input_type -> auth.v1.DeleteRoleRequest
+	1,  // 25: auth.v1.AuthService.Login:output_type -> auth.v1.LoginResponse
+	3,  // 26: auth.v1.AuthService.Register:output_type -> auth.v1.RegisterResponse
+	10, // 27: auth.v1.AuthService.GetUser:output_type -> auth.v1.GetUserResponse
+	6,  // 28: auth.v1.AuthService.ListUsers:output_type -> auth.v1.ListUsersResponse
+	11, // 29: auth.v1.AuthService.CreateUser:output_type -> auth.v1.CreateUserResponse
+	12, // 30: auth.v1.AuthService.UpdateUser:output_type -> auth.v1.UpdateUserResponse
+	13, // 31: auth.v1.AuthService.DeleteUser:output_type -> auth.v1.DeleteUserResponse
+	21, // 32: auth.v1.AuthService.GetRole:output_type -> auth.v1.GetRoleResponse
+	17, // 33: auth.v1.AuthService.ListRoles:output_type -> auth.v1.ListRolesResponse
+	22, // 34: auth.v1.AuthService.CreateRole:output_type -> auth.v1.CreateRoleResponse
+	23, // 35: auth.v1.AuthService.UpdateRole:output_type -> auth.v1.UpdateRoleResponse
+	24, // 36: auth.v1.AuthService.DeleteRole:output_type -> auth.v1.DeleteRoleResponse
+	25, // [25:37] is the sub-list for method output_type
+	13, // [13:25] is the sub-list for method input_type
+	13, // [13:13] is the sub-list for extension type_name
+	13, // [13:13] is the sub-list for extension extendee
+	0,  // [0:13] is the sub-list for field type_name
 }
 
 func init() { file_auth_v1_auth_proto_init() }
@@ -1680,7 +1746,7 @@ func file_auth_v1_auth_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_auth_v1_auth_proto_rawDesc), len(file_auth_v1_auth_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   26,
+			NumMessages:   28,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

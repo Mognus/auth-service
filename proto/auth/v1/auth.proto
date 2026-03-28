@@ -55,11 +55,14 @@ message GetUserRequest {
 }
 
 message ListUsersRequest {
-  int32         page    = 1;
-  int32         limit   = 2;
-  string        search  = 3;
-  uint64        role_id = 4;
-  optional bool active  = 5;
+  int32               page       = 1;
+  int32               limit      = 2;
+  string              search     = 3;
+  map<string, string> filters    = 4;
+  uint64              role_id    = 5;
+  optional bool       active     = 6;
+  string              sort_by    = 7;
+  string              sort_order = 8;
 }
 
 message ListUsersResponse {
@@ -125,9 +128,12 @@ message GetRoleRequest {
 }
 
 message ListRolesRequest {
-  int32  page   = 1;
-  int32  limit  = 2;
-  string search = 3;
+  int32               page       = 1;
+  int32               limit      = 2;
+  string              search     = 3;
+  map<string, string> filters    = 4;
+  string              sort_by    = 5;
+  string              sort_order = 6;
 }
 
 message ListRolesResponse {

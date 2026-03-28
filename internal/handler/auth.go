@@ -3,6 +3,7 @@ package handler
 import (
 	"context"
 	"errors"
+	"strings"
 	"time"
 
 	authv1 "auth-service/gen/auth/v1"
@@ -105,6 +106,7 @@ func (h *Handler) ListUsers(_ context.Context, req *authv1.ListUsersRequest) (*a
 		s := "%" + req.Search + "%"
 		query = query.Where("email ILIKE ? OR first_name ILIKE ? OR last_name ILIKE ?", s, s, s)
 	}
+	query = applyFilters(query, req.Filters)
 	if req.RoleId > 0 {
 		query = query.Where("role_id = ?", req.RoleId)
 	}
@@ -114,6 +116,8 @@ func (h *Handler) ListUsers(_ context.Context, req *authv1.ListUsersRequest) (*a
 
 	var total int64
 	query.Count(&total)
+
+	query = applySorting(query, req.SortBy, req.SortOrder, "id ASC")
 
 	var users []model.User
 	if err := query.Offset((page - 1) * limit).Limit(limit).Find(&users).Error; err != nil {
@@ -203,9 +207,12 @@ func (h *Handler) ListRoles(_ context.Context, req *authv1.ListRolesRequest) (*a
 	if req.Search != "" {
 		query = query.Where("name ILIKE ?", "%"+req.Search+"%")
 	}
+	query = applyFilters(query, req.Filters)
 
 	var total int64
 	query.Count(&total)
+
+	query = applySorting(query, req.SortBy, req.SortOrder, "id ASC")
 
 	var roles []model.Role
 	if err := query.Offset((page - 1) * limit).Limit(limit).Find(&roles).Error; err != nil {
@@ -274,6 +281,54 @@ func toUserResponse(u *model.User) *authv1.UserResponse {
 		CreatedAt: u.CreatedAt.Format(time.RFC3339),
 		UpdatedAt: u.UpdatedAt.Format(time.RFC3339),
 	}
+}
+
+var allowedSortColumns = map[string]bool{
+	"id": true, "email": true, "first_name": true, "last_name": true,
+	"created_at": true, "updated_at": true, "name": true, "active": true,
+}
+
+func applySorting(query *gorm.DB, sortBy, sortOrder, defaultOrder string) *gorm.DB {
+	if sortBy == "" || !allowedSortColumns[sortBy] {
+		return query.Order(defaultOrder)
+	}
+	order := "ASC"
+	if strings.ToLower(sortOrder) == "desc" {
+		order = "DESC"
+	}
+	return query.Order(sortBy + " " + order)
+}
+
+func applyFilters(query *gorm.DB, filters map[string]string) *gorm.DB {
+	for key, value := range filters {
+		if value == "" {
+			continue
+		}
+		if idx := strings.Index(key, "__"); idx != -1 {
+			field, op := key[:idx], key[idx+2:]
+			switch op {
+			case "contains":
+				query = query.Where(field+" ILIKE ?", "%"+value+"%")
+			case "startswith":
+				query = query.Where(field+" ILIKE ?", value+"%")
+			case "endswith":
+				query = query.Where(field+" ILIKE ?", "%"+value)
+			case "gte":
+				query = query.Where(field+" >= ?", value)
+			case "lte":
+				query = query.Where(field+" <= ?", value)
+			case "gt":
+				query = query.Where(field+" > ?", value)
+			case "lt":
+				query = query.Where(field+" < ?", value)
+			case "ne":
+				query = query.Where(field+" != ?", value)
+			}
+		} else {
+			query = query.Where(key+" = ?", value)
+		}
+	}
+	return query
 }
 
 func toRoleResponse(r *model.Role) *authv1.RoleResponse {
