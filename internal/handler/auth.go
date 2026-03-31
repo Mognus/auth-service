@@ -90,7 +90,7 @@ func (h *Handler) RefreshToken(ctx context.Context, req *authv1.RefreshTokenRequ
 
 	var user model.User
 	if err := h.db.WithContext(ctx).Preload("Role").First(&user, rt.UserID).Error; err != nil {
-		return nil, status.Error(codes.Internal, "user not found")
+		return nil, status.Error(codes.Unauthenticated, "invalid or expired refresh token")
 	}
 
 	// Rotation: revoke the old token and issue a new pair.
