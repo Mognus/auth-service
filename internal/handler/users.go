@@ -25,7 +25,7 @@ func (h *Handler) GetUser(ctx context.Context, req *authv1.GetUserRequest) (*aut
 	user, err := grpccrud.DefaultGet[model.User](ctx, h.db, req.Id, "Role")
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, status.Error(codes.NotFound, "user not found")
+			return nil, status.Error(codes.NotFound, "user")
 		}
 		return nil, status.Error(codes.Internal, err.Error())
 	}
@@ -82,7 +82,7 @@ func (h *Handler) UpdateUser(ctx context.Context, req *authv1.UpdateUserRequest)
 	user, err := grpccrud.DefaultUpdate[model.User](ctx, h.db, req.Id, updates, "Role")
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, status.Error(codes.NotFound, "user not found")
+			return nil, status.Error(codes.NotFound, "user")
 		}
 		return nil, status.Error(codes.Internal, err.Error())
 	}

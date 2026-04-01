@@ -24,7 +24,7 @@ func (h *Handler) GetRole(ctx context.Context, req *authv1.GetRoleRequest) (*aut
 	role, err := grpccrud.DefaultGet[model.Role](ctx, h.db, req.Id)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, status.Error(codes.NotFound, "role not found")
+			return nil, status.Error(codes.NotFound, "role")
 		}
 		return nil, status.Error(codes.Internal, err.Error())
 	}
@@ -64,7 +64,7 @@ func (h *Handler) UpdateRole(ctx context.Context, req *authv1.UpdateRoleRequest)
 	role, err := grpccrud.DefaultUpdate[model.Role](ctx, h.db, req.Id, map[string]any{"name": req.Name})
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, status.Error(codes.NotFound, "role not found")
+			return nil, status.Error(codes.NotFound, "role")
 		}
 		return nil, status.Error(codes.Internal, err.Error())
 	}
