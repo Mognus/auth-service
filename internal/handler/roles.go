@@ -47,6 +47,9 @@ func (h *Handler) ListRoles(ctx context.Context, req *authv1.ListRolesRequest) (
 }
 
 func (h *Handler) CreateRole(ctx context.Context, req *authv1.CreateRoleRequest) (*authv1.CreateRoleResponse, error) {
+	if err := h.validate(req); err != nil {
+		return nil, err
+	}
 	role, err := grpccrud.DefaultCreate(ctx, h.db, &model.Role{Name: req.Name})
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
@@ -55,6 +58,9 @@ func (h *Handler) CreateRole(ctx context.Context, req *authv1.CreateRoleRequest)
 }
 
 func (h *Handler) UpdateRole(ctx context.Context, req *authv1.UpdateRoleRequest) (*authv1.UpdateRoleResponse, error) {
+	if err := h.validate(req); err != nil {
+		return nil, err
+	}
 	role, err := grpccrud.DefaultUpdate[model.Role](ctx, h.db, req.Id, map[string]any{"name": req.Name})
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {

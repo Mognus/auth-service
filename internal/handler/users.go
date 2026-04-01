@@ -48,6 +48,9 @@ func (h *Handler) ListUsers(ctx context.Context, req *authv1.ListUsersRequest) (
 }
 
 func (h *Handler) CreateUser(ctx context.Context, req *authv1.CreateUserRequest) (*authv1.CreateUserResponse, error) {
+	if err := h.validate(req); err != nil {
+		return nil, err
+	}
 	user, err := grpccrud.DefaultCreate(ctx, h.db, &model.User{
 		Email:     req.Email,
 		Password:  req.Password,
@@ -63,6 +66,9 @@ func (h *Handler) CreateUser(ctx context.Context, req *authv1.CreateUserRequest)
 }
 
 func (h *Handler) UpdateUser(ctx context.Context, req *authv1.UpdateUserRequest) (*authv1.UpdateUserResponse, error) {
+	if err := h.validate(req); err != nil {
+		return nil, err
+	}
 	updates := map[string]any{
 		"email":      req.Email,
 		"first_name": req.FirstName,

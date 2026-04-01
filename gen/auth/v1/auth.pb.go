@@ -7,6 +7,7 @@
 package authv1
 
 import (
+	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -1697,20 +1698,22 @@ var File_auth_v1_auth_proto protoreflect.FileDescriptor
 
 const file_auth_v1_auth_proto_rawDesc = "" +
 	"\n" +
-	"\x12auth/v1/auth.proto\x12\aauth.v1\"@\n" +
-	"\fLoginRequest\x12\x14\n" +
-	"\x05email\x18\x01 \x01(\tR\x05email\x12\x1a\n" +
-	"\bpassword\x18\x02 \x01(\tR\bpassword\"\x82\x01\n" +
+	"\x12auth/v1/auth.proto\x12\aauth.v1\x1a\x1bbuf/validate/validate.proto\"W\n" +
+	"\fLoginRequest\x12 \n" +
+	"\x05email\x18\x01 \x01(\tB\n" +
+	"\xbaH\ar\x05\x18\xfe\x01`\x01R\x05email\x12%\n" +
+	"\bpassword\x18\x02 \x01(\tB\t\xbaH\x06r\x04\x10\x01\x18HR\bpassword\"\x82\x01\n" +
 	"\rLoginResponse\x12!\n" +
 	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12)\n" +
 	"\x04user\x18\x02 \x01(\v2\x15.auth.v1.UserResponseR\x04user\x12#\n" +
-	"\rrefresh_token\x18\x03 \x01(\tR\frefreshToken\"\x7f\n" +
-	"\x0fRegisterRequest\x12\x14\n" +
-	"\x05email\x18\x01 \x01(\tR\x05email\x12\x1a\n" +
-	"\bpassword\x18\x02 \x01(\tR\bpassword\x12\x1d\n" +
+	"\rrefresh_token\x18\x03 \x01(\tR\frefreshToken\"\xac\x01\n" +
+	"\x0fRegisterRequest\x12 \n" +
+	"\x05email\x18\x01 \x01(\tB\n" +
+	"\xbaH\ar\x05\x18\xfe\x01`\x01R\x05email\x12%\n" +
+	"\bpassword\x18\x02 \x01(\tB\t\xbaH\x06r\x04\x10\b\x18HR\bpassword\x12(\n" +
 	"\n" +
-	"first_name\x18\x03 \x01(\tR\tfirstName\x12\x1b\n" +
-	"\tlast_name\x18\x04 \x01(\tR\blastName\"\x85\x01\n" +
+	"first_name\x18\x03 \x01(\tB\t\xbaH\x06r\x04\x10\x01\x18dR\tfirstName\x12&\n" +
+	"\tlast_name\x18\x04 \x01(\tB\t\xbaH\x06r\x04\x10\x01\x18dR\blastName\"\x85\x01\n" +
 	"\x10RegisterResponse\x12!\n" +
 	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12)\n" +
 	"\x04user\x18\x02 \x01(\v2\x15.auth.v1.UserResponseR\x04user\x12#\n" +
@@ -1739,24 +1742,27 @@ const file_auth_v1_auth_proto_rawDesc = "" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"V\n" +
 	"\x11ListUsersResponse\x12+\n" +
 	"\x05users\x18\x01 \x03(\v2\x15.auth.v1.UserResponseR\x05users\x12\x14\n" +
-	"\x05total\x18\x02 \x01(\x03R\x05total\"\xb2\x01\n" +
-	"\x11CreateUserRequest\x12\x14\n" +
-	"\x05email\x18\x01 \x01(\tR\x05email\x12\x1a\n" +
-	"\bpassword\x18\x02 \x01(\tR\bpassword\x12\x1d\n" +
+	"\x05total\x18\x02 \x01(\x03R\x05total\"\xe8\x01\n" +
+	"\x11CreateUserRequest\x12 \n" +
+	"\x05email\x18\x01 \x01(\tB\n" +
+	"\xbaH\ar\x05\x18\xfe\x01`\x01R\x05email\x12%\n" +
+	"\bpassword\x18\x02 \x01(\tB\t\xbaH\x06r\x04\x10\b\x18HR\bpassword\x12(\n" +
 	"\n" +
-	"first_name\x18\x03 \x01(\tR\tfirstName\x12\x1b\n" +
-	"\tlast_name\x18\x04 \x01(\tR\blastName\x12\x17\n" +
-	"\arole_id\x18\x05 \x01(\x04R\x06roleId\x12\x16\n" +
-	"\x06active\x18\x06 \x01(\bR\x06active\"\xc2\x01\n" +
-	"\x11UpdateUserRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\x12\x14\n" +
-	"\x05email\x18\x02 \x01(\tR\x05email\x12\x1d\n" +
+	"first_name\x18\x03 \x01(\tB\t\xbaH\x06r\x04\x10\x01\x18dR\tfirstName\x12&\n" +
+	"\tlast_name\x18\x04 \x01(\tB\t\xbaH\x06r\x04\x10\x01\x18dR\blastName\x12 \n" +
+	"\arole_id\x18\x05 \x01(\x04B\a\xbaH\x042\x02 \x00R\x06roleId\x12\x16\n" +
+	"\x06active\x18\x06 \x01(\bR\x06active\"\x84\x03\n" +
+	"\x11UpdateUserRequest\x12\x17\n" +
+	"\x02id\x18\x01 \x01(\x04B\a\xbaH\x042\x02 \x00R\x02id\x12 \n" +
+	"\x05email\x18\x02 \x01(\tB\n" +
+	"\xbaH\ar\x05\x18\xfe\x01`\x01R\x05email\x12(\n" +
 	"\n" +
-	"first_name\x18\x03 \x01(\tR\tfirstName\x12\x1b\n" +
-	"\tlast_name\x18\x04 \x01(\tR\blastName\x12\x17\n" +
-	"\arole_id\x18\x05 \x01(\x04R\x06roleId\x12\x16\n" +
-	"\x06active\x18\x06 \x01(\bR\x06active\x12\x1a\n" +
-	"\bpassword\x18\a \x01(\tR\bpassword\"#\n" +
+	"first_name\x18\x03 \x01(\tB\t\xbaH\x06r\x04\x10\x01\x18dR\tfirstName\x12&\n" +
+	"\tlast_name\x18\x04 \x01(\tB\t\xbaH\x06r\x04\x10\x01\x18dR\blastName\x12 \n" +
+	"\arole_id\x18\x05 \x01(\x04B\a\xbaH\x042\x02 \x00R\x06roleId\x12\x16\n" +
+	"\x06active\x18\x06 \x01(\bR\x06active\x12\xa7\x01\n" +
+	"\bpassword\x18\a \x01(\tB\x8a\x01\xbaH\x86\x01\xba\x01\x82\x01\n" +
+	"\x0fpassword_length\x128password must be between 8 and 72 characters if provided\x1a5this == '' || (this.size() >= 8 && this.size() <= 72)R\bpassword\"#\n" +
 	"\x11DeleteUserRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x04R\x02id\"<\n" +
 	"\x0fGetUserResponse\x12)\n" +
@@ -1795,12 +1801,12 @@ const file_auth_v1_auth_proto_rawDesc = "" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"V\n" +
 	"\x11ListRolesResponse\x12+\n" +
 	"\x05roles\x18\x01 \x03(\v2\x15.auth.v1.RoleResponseR\x05roles\x12\x14\n" +
-	"\x05total\x18\x02 \x01(\x03R\x05total\"'\n" +
-	"\x11CreateRoleRequest\x12\x12\n" +
-	"\x04name\x18\x01 \x01(\tR\x04name\"7\n" +
-	"\x11UpdateRoleRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\x12\x12\n" +
-	"\x04name\x18\x02 \x01(\tR\x04name\"#\n" +
+	"\x05total\x18\x02 \x01(\x03R\x05total\"2\n" +
+	"\x11CreateRoleRequest\x12\x1d\n" +
+	"\x04name\x18\x01 \x01(\tB\t\xbaH\x06r\x04\x10\x01\x182R\x04name\"K\n" +
+	"\x11UpdateRoleRequest\x12\x17\n" +
+	"\x02id\x18\x01 \x01(\x04B\a\xbaH\x042\x02 \x00R\x02id\x12\x1d\n" +
+	"\x04name\x18\x02 \x01(\tB\t\xbaH\x06r\x04\x10\x01\x182R\x04name\"#\n" +
 	"\x11DeleteRoleRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x04R\x02id\"<\n" +
 	"\x0fGetRoleResponse\x12)\n" +

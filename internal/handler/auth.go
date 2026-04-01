@@ -4,30 +4,58 @@ import (
 	"context"
 	"crypto/rand"
 	"encoding/hex"
+	"errors"
+	"log"
+	"strings"
 	"time"
 
 	authv1 "auth-service/gen/auth/v1"
 	"auth-service/internal/model"
 
+	protovalidate "buf.build/go/protovalidate"
 	"github.com/golang-jwt/jwt/v5"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/proto"
 	"gorm.io/gorm"
 )
 
 type Handler struct {
 	authv1.UnimplementedAuthServiceServer
-	db             *gorm.DB
-	jwtSecret      string
-	accessTokenTTL time.Duration
+	db              *gorm.DB
+	jwtSecret       string
+	accessTokenTTL  time.Duration
 	refreshTokenTTL time.Duration
+	validator       protovalidate.Validator
 }
 
 func New(db *gorm.DB, jwtSecret string, accessTTL, refreshTTL time.Duration) *Handler {
-	return &Handler{db: db, jwtSecret: jwtSecret, accessTokenTTL: accessTTL, refreshTokenTTL: refreshTTL}
+	v, err := protovalidate.New()
+	if err != nil {
+		log.Fatal("failed to initialize validator:", err)
+	}
+	return &Handler{db: db, jwtSecret: jwtSecret, accessTokenTTL: accessTTL, refreshTokenTTL: refreshTTL, validator: v}
+}
+
+func (h *Handler) validate(msg proto.Message) error {
+	if err := h.validator.Validate(msg); err != nil {
+		var valErr *protovalidate.ValidationError
+		if errors.As(err, &valErr) && len(valErr.Violations) > 0 {
+			parts := make([]string, 0, len(valErr.Violations))
+			for _, v := range valErr.Violations {
+				parts = append(parts, v.String())
+			}
+			return status.Error(codes.InvalidArgument, strings.Join(parts, ", "))
+		}
+		return status.Error(codes.InvalidArgument, err.Error())
+	}
+	return nil
 }
 
 func (h *Handler) Login(ctx context.Context, req *authv1.LoginRequest) (*authv1.LoginResponse, error) {
+	if err := h.validate(req); err != nil {
+		return nil, err
+	}
 	var user model.User
 	if err := h.db.WithContext(ctx).Preload("Role").Where("email = ?", req.Email).First(&user).Error; err != nil {
 		return nil, status.Error(codes.Unauthenticated, "invalid email or password")
@@ -46,12 +74,12 @@ func (h *Handler) Login(ctx context.Context, req *authv1.LoginRequest) (*authv1.
 }
 
 func (h *Handler) Register(ctx context.Context, req *authv1.RegisterRequest) (*authv1.RegisterResponse, error) {
+	if err := h.validate(req); err != nil {
+		return nil, err
+	}
 	var existing model.User
 	if err := h.db.WithContext(ctx).Where("email = ?", req.Email).First(&existing).Error; err == nil {
 		return nil, status.Error(codes.AlreadyExists, "user with this email already exists")
-	}
-	if len(req.Password) < 8 {
-		return nil, status.Error(codes.InvalidArgument, "password must be at least 8 characters")
 	}
 
 	var defaultRole model.Role

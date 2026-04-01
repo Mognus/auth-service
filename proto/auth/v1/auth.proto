@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package auth.v1;
 
+import "buf/validate/validate.proto";
+
 option go_package = "auth-service/gen/auth/v1;authv1";
 
 service AuthService {
@@ -29,8 +31,8 @@ service AuthService {
 // --- Auth ---
 
 message LoginRequest {
-  string email    = 1;
-  string password = 2;
+  string email    = 1 [(buf.validate.field).string = {email: true, max_len: 254}];
+  string password = 2 [(buf.validate.field).string = {min_len: 1, max_len: 72}];
 }
 
 message LoginResponse {
@@ -40,10 +42,10 @@ message LoginResponse {
 }
 
 message RegisterRequest {
-  string email      = 1;
-  string password   = 2;
-  string first_name = 3;
-  string last_name  = 4;
+  string email      = 1 [(buf.validate.field).string = {email: true, max_len: 254}];
+  string password   = 2 [(buf.validate.field).string = {min_len: 8, max_len: 72}];
+  string first_name = 3 [(buf.validate.field).string = {min_len: 1, max_len: 100}];
+  string last_name  = 4 [(buf.validate.field).string = {min_len: 1, max_len: 100}];
 }
 
 message RegisterResponse {
@@ -90,22 +92,26 @@ message ListUsersResponse {
 }
 
 message CreateUserRequest {
-  string email      = 1;
-  string password   = 2;
-  string first_name = 3;
-  string last_name  = 4;
-  uint64 role_id    = 5;
+  string email      = 1 [(buf.validate.field).string = {email: true, max_len: 254}];
+  string password   = 2 [(buf.validate.field).string = {min_len: 8, max_len: 72}];
+  string first_name = 3 [(buf.validate.field).string = {min_len: 1, max_len: 100}];
+  string last_name  = 4 [(buf.validate.field).string = {min_len: 1, max_len: 100}];
+  uint64 role_id    = 5 [(buf.validate.field).uint64.gt = 0];
   bool   active     = 6;
 }
 
 message UpdateUserRequest {
-  uint64 id         = 1;
-  string email      = 2;
-  string first_name = 3;
-  string last_name  = 4;
-  uint64 role_id    = 5;
+  uint64 id         = 1 [(buf.validate.field).uint64.gt = 0];
+  string email      = 2 [(buf.validate.field).string = {email: true, max_len: 254}];
+  string first_name = 3 [(buf.validate.field).string = {min_len: 1, max_len: 100}];
+  string last_name  = 4 [(buf.validate.field).string = {min_len: 1, max_len: 100}];
+  uint64 role_id    = 5 [(buf.validate.field).uint64.gt = 0];
   bool   active     = 6;
-  string password   = 7;
+  string password   = 7 [(buf.validate.field).cel = {
+    id: "password_length",
+    message: "password must be between 8 and 72 characters if provided",
+    expression: "this == '' || (this.size() >= 8 && this.size() <= 72)"
+  }];
 }
 
 message DeleteUserRequest {
@@ -161,12 +167,12 @@ message ListRolesResponse {
 }
 
 message CreateRoleRequest {
-  string name = 1;
+  string name = 1 [(buf.validate.field).string = {min_len: 1, max_len: 50}];
 }
 
 message UpdateRoleRequest {
-  uint64 id   = 1;
-  string name = 2;
+  uint64 id   = 1 [(buf.validate.field).uint64.gt = 0];
+  string name = 2 [(buf.validate.field).string = {min_len: 1, max_len: 50}];
 }
 
 message DeleteRoleRequest {
