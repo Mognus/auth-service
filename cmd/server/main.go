@@ -1,7 +1,9 @@
 package main
 
 import (
+	"context"
 	"log"
+	"log/slog"
 	"net"
 	"os"
 	"time"
@@ -13,6 +15,8 @@ import (
 
 	"github.com/joho/godotenv"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 func main() {
@@ -50,11 +54,19 @@ func main() {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
-	s := grpc.NewServer()
+	s := grpc.NewServer(grpc.UnaryInterceptor(loggingInterceptor))
 	authv1.RegisterAuthServiceServer(s, handler.New(database, jwtSecret, accessTTL, refreshTTL))
 
 	log.Println("auth-service listening on :50051")
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}
+}
+
+func loggingInterceptor(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
+	resp, err := handler(ctx, req)
+	if err != nil && status.Code(err) == codes.Internal {
+		slog.Error(info.FullMethod, "error", err)
+	}
+	return resp, err
 }
