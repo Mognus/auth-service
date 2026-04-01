@@ -1,11 +1,11 @@
-package provider
+package client
 
 import (
 	"context"
 	"sync"
 
 	authv1 "auth-service/gen/auth/v1"
-	client "auth-service/client"
+
 	libcrud "github.com/Mognus/go-grpc-crud/crud"
 	grpccrud "github.com/Mognus/go-grpc-crud/proxy"
 
@@ -55,11 +55,8 @@ func (p *UserProvider) GetSchema() libcrud.Schema {
 }
 
 func (p *UserProvider) SchemaHandler() fiber.Handler {
-	return func(c *fiber.Ctx) error {
-		return c.JSON(p.GetSchema())
-	}
+	return func(c *fiber.Ctx) error { return c.JSON(p.GetSchema()) }
 }
-
 
 func (p *UserProvider) ListHandler() fiber.Handler {
 	return grpccrud.DefaultListProxy(func(ctx context.Context, page, limit int32, search string, filters map[string]string, sortBy, sortOrder string) ([]any, int64, error) {
@@ -72,7 +69,7 @@ func (p *UserProvider) ListHandler() fiber.Handler {
 		}
 		items := make([]any, len(resp.Users))
 		for i, u := range resp.Users {
-			items[i] = client.ToUserJSON(u)
+			items[i] = ToUserJSON(u)
 		}
 		return items, resp.Total, nil
 	})
@@ -84,7 +81,7 @@ func (p *UserProvider) GetHandler() fiber.Handler {
 		if err != nil {
 			return nil, err
 		}
-		return client.ToUserJSON(resp.User), nil
+		return ToUserJSON(resp.User), nil
 	})
 }
 
@@ -94,7 +91,7 @@ func (p *UserProvider) CreateHandler() fiber.Handler {
 		if err != nil {
 			return nil, err
 		}
-		return client.ToUserJSON(resp.User), nil
+		return ToUserJSON(resp.User), nil
 	})
 }
 
@@ -105,7 +102,7 @@ func (p *UserProvider) UpdateHandler() fiber.Handler {
 		if err != nil {
 			return nil, err
 		}
-		return client.ToUserJSON(resp.User), nil
+		return ToUserJSON(resp.User), nil
 	})
 }
 

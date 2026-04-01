@@ -1,4 +1,4 @@
-package handler
+package client
 
 import (
 	"encoding/base64"
@@ -7,23 +7,23 @@ import (
 	"time"
 
 	authv1 "auth-service/gen/auth/v1"
-	client "auth-service/client"
+
 	apperrors "github.com/Mognus/go-grpc-crud/errors"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/limiter"
 )
 
-type AuthHandler struct {
+type authHandler struct {
 	grpcClient authv1.AuthServiceClient
-	config     *client.Config
+	config     *Config
 }
 
-func NewAuthHandler(grpcClient authv1.AuthServiceClient, config *client.Config) *AuthHandler {
-	return &AuthHandler{grpcClient: grpcClient, config: config}
+func newAuthHandler(grpcClient authv1.AuthServiceClient, config *Config) *authHandler {
+	return &authHandler{grpcClient: grpcClient, config: config}
 }
 
-func (h *AuthHandler) RegisterRoutes(router fiber.Router) {
+func (h *authHandler) RegisterRoutes(router fiber.Router) {
 	loginLimiter := limiter.New(limiter.Config{
 		Max:        5,
 		Expiration: 15 * time.Minute,
@@ -37,14 +37,14 @@ func (h *AuthHandler) RegisterRoutes(router fiber.Router) {
 	})
 
 	authRoutes := router.Group("/auth")
-	authRoutes.Post("/login", loginLimiter, h.Login)
-	authRoutes.Post("/register", h.Register)
-	authRoutes.Post("/refresh", h.Refresh)
-	authRoutes.Post("/logout", h.Logout)
-	authRoutes.Get("/me", h.config.JWTMiddleware(), h.config.RequireAuth, h.Me)
+	authRoutes.Post("/login", loginLimiter, h.login)
+	authRoutes.Post("/register", h.register)
+	authRoutes.Post("/refresh", h.refresh)
+	authRoutes.Post("/logout", h.logout)
+	authRoutes.Get("/me", h.config.JWTMiddleware(), h.config.RequireAuth, h.me)
 }
 
-func (h *AuthHandler) Login(c *fiber.Ctx) error {
+func (h *authHandler) login(c *fiber.Ctx) error {
 	var req struct {
 		Email    string `json:"email"`
 		Password string `json:"password"`
@@ -61,10 +61,10 @@ func (h *AuthHandler) Login(c *fiber.Ctx) error {
 	}
 	setAccessCookie(c, resp.AccessToken)
 	setRefreshCookie(c, resp.RefreshToken)
-	return c.JSON(fiber.Map{"accessToken": resp.AccessToken, "user": client.ToUserJSON(resp.User)})
+	return c.JSON(fiber.Map{"accessToken": resp.AccessToken, "user": ToUserJSON(resp.User)})
 }
 
-func (h *AuthHandler) Register(c *fiber.Ctx) error {
+func (h *authHandler) register(c *fiber.Ctx) error {
 	var req struct {
 		Email     string `json:"email"`
 		Password  string `json:"password"`
@@ -85,10 +85,10 @@ func (h *AuthHandler) Register(c *fiber.Ctx) error {
 	}
 	setAccessCookie(c, resp.AccessToken)
 	setRefreshCookie(c, resp.RefreshToken)
-	return c.Status(201).JSON(fiber.Map{"accessToken": resp.AccessToken, "user": client.ToUserJSON(resp.User)})
+	return c.Status(201).JSON(fiber.Map{"accessToken": resp.AccessToken, "user": ToUserJSON(resp.User)})
 }
 
-func (h *AuthHandler) Refresh(c *fiber.Ctx) error {
+func (h *authHandler) refresh(c *fiber.Ctx) error {
 	refreshToken := c.Cookies("refresh_token")
 	if refreshToken == "" {
 		return apperrors.Unauthorized("No refresh token")
@@ -104,8 +104,8 @@ func (h *AuthHandler) Refresh(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{"accessToken": resp.AccessToken, "refreshToken": resp.RefreshToken})
 }
 
-func (h *AuthHandler) Me(c *fiber.Ctx) error {
-	userID, err := client.GetUserIDFromContext(c)
+func (h *authHandler) me(c *fiber.Ctx) error {
+	userID, err := GetUserIDFromContext(c)
 	if err != nil {
 		return err
 	}
@@ -113,10 +113,10 @@ func (h *AuthHandler) Me(c *fiber.Ctx) error {
 	if err != nil {
 		return apperrors.GrpcToHTTP(err)
 	}
-	return c.JSON(client.ToUserJSON(resp.User))
+	return c.JSON(ToUserJSON(resp.User))
 }
 
-func (h *AuthHandler) Logout(c *fiber.Ctx) error {
+func (h *authHandler) logout(c *fiber.Ctx) error {
 	refreshToken := c.Cookies("refresh_token")
 	if refreshToken != "" {
 		h.grpcClient.Logout(c.UserContext(), &authv1.LogoutRequest{RefreshToken: refreshToken})

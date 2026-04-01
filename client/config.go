@@ -13,7 +13,3 @@ func NewConfig(jwtSecret string, storage fiber.Storage) *Config {
 		Storage:    storage,
 	}
 }
-
-type Handler interface {
-	RegisterRoutes(router fiber.Router)
-}

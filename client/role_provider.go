@@ -1,10 +1,10 @@
-package provider
+package client
 
 import (
 	"context"
 
 	authv1 "auth-service/gen/auth/v1"
-	client "auth-service/client"
+
 	libcrud "github.com/Mognus/go-grpc-crud/crud"
 	grpccrud "github.com/Mognus/go-grpc-crud/proxy"
 
@@ -36,19 +36,7 @@ func (p *RoleProvider) GetSchema() libcrud.Schema {
 }
 
 func (p *RoleProvider) SchemaHandler() fiber.Handler {
-	return func(c *fiber.Ctx) error {
-		return c.JSON(p.GetSchema())
-	}
-}
-
-func (p *RoleProvider) RegisterRoutes(router fiber.Router) {
-	roles := router.Group("/roles")
-	roles.Get("/", p.ListHandler())
-	roles.Get("/schema", p.SchemaHandler())
-	roles.Get("/:id", p.GetHandler())
-	roles.Post("/", p.CreateHandler())
-	roles.Put("/:id", p.UpdateHandler())
-	roles.Delete("/:id", p.DeleteHandler())
+	return func(c *fiber.Ctx) error { return c.JSON(p.GetSchema()) }
 }
 
 func (p *RoleProvider) ListHandler() fiber.Handler {
@@ -62,8 +50,7 @@ func (p *RoleProvider) ListHandler() fiber.Handler {
 		}
 		items := make([]any, len(resp.Roles))
 		for i, r := range resp.Roles {
-			v := client.ToRoleJSON(r)
-			items[i] = &v
+			items[i] = ToRoleJSON(r)
 		}
 		return items, resp.Total, nil
 	})
@@ -75,7 +62,7 @@ func (p *RoleProvider) GetHandler() fiber.Handler {
 		if err != nil {
 			return nil, err
 		}
-		return client.ToRoleJSON(resp.Role), nil
+		return ToRoleJSON(resp.Role), nil
 	})
 }
 
@@ -85,7 +72,7 @@ func (p *RoleProvider) CreateHandler() fiber.Handler {
 		if err != nil {
 			return nil, err
 		}
-		return client.ToRoleJSON(resp.Role), nil
+		return ToRoleJSON(resp.Role), nil
 	})
 }
 
@@ -96,7 +83,7 @@ func (p *RoleProvider) UpdateHandler() fiber.Handler {
 		if err != nil {
 			return nil, err
 		}
-		return client.ToRoleJSON(resp.Role), nil
+		return ToRoleJSON(resp.Role), nil
 	})
 }
 
