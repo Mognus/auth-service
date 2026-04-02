@@ -12,7 +12,7 @@ type Handler interface {
 
 type AuthService struct {
 	Config    *Config
-	Providers []libcrud.GRPCProvider
+	providers []libcrud.GRPCProvider
 	handlers  []Handler
 	conn      *grpc.ClientConn
 }
@@ -27,7 +27,7 @@ func New(addr, jwtSecret string, storage fiber.Storage) (*AuthService, error) {
 	roles := NewRoleProvider(grpcClient)
 	return &AuthService{
 		Config:    config,
-		Providers: []libcrud.GRPCProvider{users, roles},
+		providers: []libcrud.GRPCProvider{users, roles},
 		handlers:  []Handler{newAuthHandler(grpcClient, config)},
 		conn:      conn,
 	}, nil
@@ -36,6 +36,8 @@ func New(addr, jwtSecret string, storage fiber.Storage) (*AuthService, error) {
 func (s *AuthService) Close() { s.conn.Close() }
 
 func (s *AuthService) Name() string { return "auth" }
+
+func (s *AuthService) Providers() []libcrud.GRPCProvider { return s.providers }
 
 func (s *AuthService) RegisterRoutes(router fiber.Router) {
 	for _, h := range s.handlers {
