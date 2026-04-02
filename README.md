@@ -2,8 +2,6 @@
 
 Standalone gRPC microservice handling authentication, users, and roles for the [NextJS-GO Template](https://github.com/Mognus/nextjs-go-template).
 
-**Design docs:** [[auth-microservice-grpc]] | [[auth-grpc-backend-integration]]
-
 ---
 
 ## Overview
