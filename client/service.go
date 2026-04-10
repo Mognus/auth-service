@@ -44,3 +44,7 @@ func (s *AuthService) RegisterRoutes(router fiber.Router) {
 		h.RegisterRoutes(router)
 	}
 }
+
+func (s *AuthService) JWTMiddleware() fiber.Handler { return s.Config.JWTMiddleware() }
+
+func (s *AuthService) AdminMiddleware() fiber.Handler { return s.Config.RequireAdmin }
