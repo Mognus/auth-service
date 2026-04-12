@@ -6,17 +6,17 @@ Standalone gRPC microservice handling authentication, users, and roles for the [
 
 ## Overview
 
-- Owns the `users` and `roles` database tables
+- Owns the `users`, `roles`, and `refresh_tokens` database tables
 - Exposes a gRPC interface on `:50051`
-- Manages its own migrations on startup
-- JWT is issued here, validated locally in the backend (shared secret, no RPC per request)
+- Runs DB migrations on startup via `cmd/migrate`
+- JWT issued here, validated locally in the backend (shared secret — no RPC per request)
 - Cookies are set by the backend HTTP layer, not here
 
 ## gRPC Interface
 
 ```
 AuthService
-  Login / Register
+  Login / Register / RefreshToken / Logout
 
   GetUser / ListUsers / CreateUser / UpdateUser / DeleteUser
   GetRole / ListRoles / CreateRole / UpdateRole / DeleteRole
@@ -27,37 +27,43 @@ Generated code: `gen/auth/v1/` (do not edit)
 
 ## Environment Variables
 
-| Variable      | Default     | Description             |
-|---------------|-------------|-------------------------|
-| `DB_HOST`     | `localhost` | Postgres host           |
-| `DB_PORT`     | `5432`      | Postgres port           |
-| `DB_USER`     | `postgres`  | Postgres user           |
-| `DB_PASSWORD` | `postgres`  | Postgres password       |
-| `DB_NAME`     | `app_db`    | Database name           |
-| `DB_SSLMODE`  | `disable`   | SSL mode                |
-| `JWT_SECRET`  | —           | Required. Shared with backend. |
+| Variable          | Default     | Description                    |
+|-------------------|-------------|--------------------------------|
+| `DB_HOST`         | `localhost` | Postgres host                  |
+| `DB_PORT`         | `5432`      | Postgres port                  |
+| `DB_USER`         | `postgres`  | Postgres user                  |
+| `DB_PASSWORD`     | `postgres`  | Postgres password              |
+| `DB_NAME`         | `app_db`    | Database name                  |
+| `DB_SSLMODE`      | `disable`   | SSL mode                       |
+| `JWT_SECRET`      | —           | Required. Shared with backend. |
+| `JWT_ACCESS_TTL`  | `15m`       | Access token lifetime          |
+| `JWT_REFRESH_TTL` | `168h`      | Refresh token lifetime         |
+
+## Migrations
+
+Migrations live in `migrations/` and run automatically on container startup before Air.
+
+```bash
+make migrate-up       # apply pending migrations
+make migrate-down     # roll back all migrations
+make migrate-version  # show current version
+```
+
+Tool: [golang-migrate](https://github.com/golang-migrate/migrate)
 
 ## Development
 
-Runs via Docker Compose as part of the main stack:
-
 ```bash
-make dev
+make dev        # start full stack (runs migrations automatically)
+make dev-build  # rebuild images + start
 ```
 
-Or standalone with Air:
+## Seeding (Dev only)
 
 ```bash
-air
-```
-
-## Seeding
-
-Users are seeded via the script in `scripts/seed_users.go` in the parent repo — it writes directly to the database:
-
-```bash
-cd scripts && go run seed_users.go -fixed-roles -password=test123
-# creates: seed_admin@example.com, seed_user@example.com, seed_guest@example.com
+make seed n=10  # create 10 test users  → user1@dev.local … / password123
+make seed-root  # create root admin     → root@dev.local / root1234
+make seed-all   # one user per role     → root + user + guest
 ```
 
 ## Regenerating Proto Code
@@ -66,4 +72,4 @@ cd scripts && go run seed_users.go -fixed-roles -password=test123
 buf generate
 ```
 
-Requires [buf](https://buf.build/docs/installation) and a `buf.build` account for remote plugins.
+Requires [buf](https://buf.build/docs/installation).

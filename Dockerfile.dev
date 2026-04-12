@@ -18,4 +18,4 @@ COPY services/auth-service/ .
 
 EXPOSE 50051
 
-CMD ["air"]
+CMD ["sh", "-c", "go run ./cmd/migrate up && air"]
