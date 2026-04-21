@@ -1,12 +1,11 @@
 package client
 
 import (
-	"context"
-
 	authv1 "auth-service/gen/auth/v1"
 
+	fiberhandler "github.com/Mognus/go-grpc-crud"
 	libcrud "github.com/Mognus/go-grpc-crud/crud"
-	grpccrud "github.com/Mognus/go-grpc-crud/proxy"
+	apperrors "github.com/Mognus/go-grpc-crud/errors"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -35,61 +34,84 @@ func (p *RoleProvider) GetSchema() libcrud.Schema {
 	}
 }
 
-func (p *RoleProvider) SchemaHandler() fiber.Handler {
-	return func(c *fiber.Ctx) error { return c.JSON(p.GetSchema()) }
-}
+func (p *RoleProvider) HandleSchema(c *fiber.Ctx) error { return c.JSON(p.GetSchema()) }
 
-func (p *RoleProvider) ListHandler() fiber.Handler {
-	return grpccrud.DefaultListProxy(func(ctx context.Context, page, limit int32, search string, filters map[string]string, sortBy, sortOrder string) ([]any, int64, error) {
-		resp, err := p.grpcClient.ListRoles(ctx, &authv1.ListRolesRequest{
-			Page: page, Limit: limit, Search: search,
-			Filters: filters, SortBy: sortBy, SortOrder: sortOrder,
-		})
-		if err != nil {
-			return nil, 0, err
-		}
-		items := make([]any, len(resp.Roles))
-		for i, r := range resp.Roles {
-			items[i] = ToRoleJSON(r)
-		}
-		return items, resp.Total, nil
+func (p *RoleProvider) HandleList(c *fiber.Ctx) error {
+	params := fiberhandler.ParseListParams(c)
+
+	resp, err := p.grpcClient.ListRoles(c.UserContext(), &authv1.ListRolesRequest{
+		Page: params.Page, Limit: params.Limit, Search: params.Search,
+		Filters: params.Filters, SortBy: params.SortBy, SortOrder: params.SortOrder,
 	})
+	if err != nil {
+		return apperrors.GrpcToHTTP(err)
+	}
+
+	items := make([]any, len(resp.Roles))
+	for i, r := range resp.Roles {
+		items[i] = ToRoleJSON(r)
+	}
+
+	return fiberhandler.WriteList(c, items, resp.Total, params.Page, params.Limit)
 }
 
-func (p *RoleProvider) GetHandler() fiber.Handler {
-	return grpccrud.DefaultGetProxy(func(ctx context.Context, id uint64) (any, error) {
-		resp, err := p.grpcClient.GetRole(ctx, &authv1.GetRoleRequest{Id: id})
-		if err != nil {
-			return nil, err
-		}
-		return ToRoleJSON(resp.Role), nil
-	})
-}
-
-func (p *RoleProvider) CreateHandler() fiber.Handler {
-	return grpccrud.DefaultCreateProxy(func(ctx context.Context, req *authv1.CreateRoleRequest) (any, error) {
-		resp, err := p.grpcClient.CreateRole(ctx, req)
-		if err != nil {
-			return nil, err
-		}
-		return ToRoleJSON(resp.Role), nil
-	})
-}
-
-func (p *RoleProvider) UpdateHandler() fiber.Handler {
-	return grpccrud.DefaultUpdateProxy(func(ctx context.Context, id uint64, req *authv1.UpdateRoleRequest) (any, error) {
-		req.Id = id
-		resp, err := p.grpcClient.UpdateRole(ctx, req)
-		if err != nil {
-			return nil, err
-		}
-		return ToRoleJSON(resp.Role), nil
-	})
-}
-
-func (p *RoleProvider) DeleteHandler() fiber.Handler {
-	return grpccrud.DefaultDeleteProxy(func(ctx context.Context, id uint64) error {
-		_, err := p.grpcClient.DeleteRole(ctx, &authv1.DeleteRoleRequest{Id: id})
+func (p *RoleProvider) HandleGet(c *fiber.Ctx) error {
+	id, err := fiberhandler.ParseID(c)
+	if err != nil {
 		return err
-	})
+	}
+
+	resp, err := p.grpcClient.GetRole(c.UserContext(), &authv1.GetRoleRequest{Id: id})
+	if err != nil {
+		return apperrors.GrpcToHTTP(err)
+	}
+
+	return c.JSON(ToRoleJSON(resp.Role))
+}
+
+func (p *RoleProvider) HandleCreate(c *fiber.Ctx) error {
+	req := &authv1.CreateRoleRequest{}
+	if err := fiberhandler.DecodeBody(c, req); err != nil {
+		return err
+	}
+
+	resp, err := p.grpcClient.CreateRole(c.UserContext(), req)
+	if err != nil {
+		return apperrors.GrpcToHTTP(err)
+	}
+
+	return fiberhandler.WriteCreated(c, ToRoleJSON(resp.Role))
+}
+
+func (p *RoleProvider) HandleUpdate(c *fiber.Ctx) error {
+	id, err := fiberhandler.ParseID(c)
+	if err != nil {
+		return err
+	}
+
+	req := &authv1.UpdateRoleRequest{}
+	if err := fiberhandler.DecodeBody(c, req); err != nil {
+		return err
+	}
+
+	req.Id = id
+	resp, err := p.grpcClient.UpdateRole(c.UserContext(), req)
+	if err != nil {
+		return apperrors.GrpcToHTTP(err)
+	}
+
+	return c.JSON(ToRoleJSON(resp.Role))
+}
+
+func (p *RoleProvider) HandleDelete(c *fiber.Ctx) error {
+	id, err := fiberhandler.ParseID(c)
+	if err != nil {
+		return err
+	}
+
+	if _, err := p.grpcClient.DeleteRole(c.UserContext(), &authv1.DeleteRoleRequest{Id: id}); err != nil {
+		return apperrors.GrpcToHTTP(err)
+	}
+
+	return c.SendStatus(fiber.StatusNoContent)
 }

@@ -6,8 +6,9 @@ import (
 
 	authv1 "auth-service/gen/auth/v1"
 
+	fiberhandler "github.com/Mognus/go-grpc-crud"
 	libcrud "github.com/Mognus/go-grpc-crud/crud"
-	grpccrud "github.com/Mognus/go-grpc-crud/proxy"
+	apperrors "github.com/Mognus/go-grpc-crud/errors"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -54,61 +55,84 @@ func (p *UserProvider) GetSchema() libcrud.Schema {
 	return p.schema
 }
 
-func (p *UserProvider) SchemaHandler() fiber.Handler {
-	return func(c *fiber.Ctx) error { return c.JSON(p.GetSchema()) }
-}
+func (p *UserProvider) HandleSchema(c *fiber.Ctx) error { return c.JSON(p.GetSchema()) }
 
-func (p *UserProvider) ListHandler() fiber.Handler {
-	return grpccrud.DefaultListProxy(func(ctx context.Context, page, limit int32, search string, filters map[string]string, sortBy, sortOrder string) ([]any, int64, error) {
-		resp, err := p.grpcClient.ListUsers(ctx, &authv1.ListUsersRequest{
-			Page: page, Limit: limit, Search: search,
-			Filters: filters, SortBy: sortBy, SortOrder: sortOrder,
-		})
-		if err != nil {
-			return nil, 0, err
-		}
-		items := make([]any, len(resp.Users))
-		for i, u := range resp.Users {
-			items[i] = ToUserJSON(u)
-		}
-		return items, resp.Total, nil
+func (p *UserProvider) HandleList(c *fiber.Ctx) error {
+	params := fiberhandler.ParseListParams(c)
+
+	resp, err := p.grpcClient.ListUsers(c.UserContext(), &authv1.ListUsersRequest{
+		Page: params.Page, Limit: params.Limit, Search: params.Search,
+		Filters: params.Filters, SortBy: params.SortBy, SortOrder: params.SortOrder,
 	})
+	if err != nil {
+		return apperrors.GrpcToHTTP(err)
+	}
+
+	items := make([]any, len(resp.Users))
+	for i, u := range resp.Users {
+		items[i] = ToUserJSON(u)
+	}
+
+	return fiberhandler.WriteList(c, items, resp.Total, params.Page, params.Limit)
 }
 
-func (p *UserProvider) GetHandler() fiber.Handler {
-	return grpccrud.DefaultGetProxy(func(ctx context.Context, id uint64) (any, error) {
-		resp, err := p.grpcClient.GetUser(ctx, &authv1.GetUserRequest{Id: id})
-		if err != nil {
-			return nil, err
-		}
-		return ToUserJSON(resp.User), nil
-	})
-}
-
-func (p *UserProvider) CreateHandler() fiber.Handler {
-	return grpccrud.DefaultCreateProxy(func(ctx context.Context, req *authv1.CreateUserRequest) (any, error) {
-		resp, err := p.grpcClient.CreateUser(ctx, req)
-		if err != nil {
-			return nil, err
-		}
-		return ToUserJSON(resp.User), nil
-	})
-}
-
-func (p *UserProvider) UpdateHandler() fiber.Handler {
-	return grpccrud.DefaultUpdateProxy(func(ctx context.Context, id uint64, req *authv1.UpdateUserRequest) (any, error) {
-		req.Id = id
-		resp, err := p.grpcClient.UpdateUser(ctx, req)
-		if err != nil {
-			return nil, err
-		}
-		return ToUserJSON(resp.User), nil
-	})
-}
-
-func (p *UserProvider) DeleteHandler() fiber.Handler {
-	return grpccrud.DefaultDeleteProxy(func(ctx context.Context, id uint64) error {
-		_, err := p.grpcClient.DeleteUser(ctx, &authv1.DeleteUserRequest{Id: id})
+func (p *UserProvider) HandleGet(c *fiber.Ctx) error {
+	id, err := fiberhandler.ParseID(c)
+	if err != nil {
 		return err
-	})
+	}
+
+	resp, err := p.grpcClient.GetUser(c.UserContext(), &authv1.GetUserRequest{Id: id})
+	if err != nil {
+		return apperrors.GrpcToHTTP(err)
+	}
+
+	return c.JSON(ToUserJSON(resp.User))
+}
+
+func (p *UserProvider) HandleCreate(c *fiber.Ctx) error {
+	req := &authv1.CreateUserRequest{}
+	if err := fiberhandler.DecodeBody(c, req); err != nil {
+		return err
+	}
+
+	resp, err := p.grpcClient.CreateUser(c.UserContext(), req)
+	if err != nil {
+		return apperrors.GrpcToHTTP(err)
+	}
+
+	return fiberhandler.WriteCreated(c, ToUserJSON(resp.User))
+}
+
+func (p *UserProvider) HandleUpdate(c *fiber.Ctx) error {
+	id, err := fiberhandler.ParseID(c)
+	if err != nil {
+		return err
+	}
+
+	req := &authv1.UpdateUserRequest{}
+	if err := fiberhandler.DecodeBody(c, req); err != nil {
+		return err
+	}
+
+	req.Id = id
+	resp, err := p.grpcClient.UpdateUser(c.UserContext(), req)
+	if err != nil {
+		return apperrors.GrpcToHTTP(err)
+	}
+
+	return c.JSON(ToUserJSON(resp.User))
+}
+
+func (p *UserProvider) HandleDelete(c *fiber.Ctx) error {
+	id, err := fiberhandler.ParseID(c)
+	if err != nil {
+		return err
+	}
+
+	if _, err := p.grpcClient.DeleteUser(c.UserContext(), &authv1.DeleteUserRequest{Id: id}); err != nil {
+		return apperrors.GrpcToHTTP(err)
+	}
+
+	return c.SendStatus(fiber.StatusNoContent)
 }
