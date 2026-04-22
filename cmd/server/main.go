@@ -10,7 +10,7 @@ import (
 
 	authv1 "auth-service/gen/auth/v1"
 	"auth-service/internal/db"
-	"auth-service/internal/handler"
+	"auth-service/internal/server"
 
 	"github.com/joho/godotenv"
 	"google.golang.org/grpc"
@@ -46,7 +46,7 @@ func main() {
 	}
 
 	s := grpc.NewServer(grpc.ChainUnaryInterceptor(recoveryInterceptor, loggingInterceptor))
-	authv1.RegisterAuthServiceServer(s, handler.New(database, jwtSecret, accessTTL, refreshTTL))
+	authv1.RegisterAuthServiceServer(s, server.New(database, jwtSecret, accessTTL, refreshTTL))
 
 	log.Println("auth-service listening on :50051")
 	if err := s.Serve(lis); err != nil {

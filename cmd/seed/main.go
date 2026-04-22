@@ -8,7 +8,8 @@ import (
 	"strconv"
 
 	"auth-service/internal/db"
-	"auth-service/internal/model"
+	"auth-service/internal/roles"
+	"auth-service/internal/users"
 
 	"github.com/joho/godotenv"
 	"gorm.io/gorm"
@@ -41,8 +42,8 @@ func main() {
 
 	case "root":
 		flags := flag.NewFlagSet("root", flag.ExitOnError)
-		email    := flags.String("email",    "root@dev.local", "admin email")
-		password := flags.String("password", "root1234",       "admin password")
+		email := flags.String("email", "root@dev.local", "admin email")
+		password := flags.String("password", "root1234", "admin password")
 		flags.Parse(os.Args[2:])
 		seedRootAdmin(database, *email, *password)
 
@@ -57,17 +58,17 @@ func main() {
 
 // seedBatch creates n test users with the default user role.
 func seedBatch(database *gorm.DB, count int) {
-	roleID := mustRoleID(database, model.RoleUser)
+	roleID := mustRoleID(database, roles.RoleUser)
 
 	for i := 1; i <= count; i++ {
-		user := model.User{
+		user := users.User{
 			Email:     fmt.Sprintf("user%d@dev.local", i),
 			Password:  "password123",
 			FirstName: fmt.Sprintf("User%d", i),
 			LastName:  "Test",
 			RoleID:    roleID,
 		}
-		if err := database.Where(model.User{Email: user.Email}).FirstOrCreate(&user).Error; err != nil {
+		if err := database.Where(users.User{Email: user.Email}).FirstOrCreate(&user).Error; err != nil {
 			log.Printf("skip user%d: %v", i, err)
 		}
 	}
@@ -78,15 +79,15 @@ func seedBatch(database *gorm.DB, count int) {
 // seedRootAdmin creates an admin user with the given credentials.
 // Defaults to root@dev.local / root1234 when called without flags.
 func seedRootAdmin(database *gorm.DB, email, password string) {
-	admin := model.User{
+	admin := users.User{
 		Email:     email,
 		Password:  password,
 		FirstName: "Root",
 		LastName:  "Admin",
-		RoleID:    mustRoleID(database, model.RoleAdmin),
+		RoleID:    mustRoleID(database, roles.RoleAdmin),
 	}
 
-	if err := database.Where(model.User{Email: admin.Email}).FirstOrCreate(&admin).Error; err != nil {
+	if err := database.Where(users.User{Email: admin.Email}).FirstOrCreate(&admin).Error; err != nil {
 		log.Fatalf("seed root admin: %v", err)
 	}
 
@@ -98,23 +99,23 @@ func seedAll(database *gorm.DB) {
 	seedRootAdmin(database, "root@dev.local", "root1234")
 
 	cases := []struct {
-		role     model.UserRole
+		role     roles.UserRole
 		email    string
 		password string
 	}{
-		{model.RoleUser,  "user@dev.local",  "password123"},
-		{model.RoleGuest, "guest@dev.local", "password123"},
+		{roles.RoleUser, "user@dev.local", "password123"},
+		{roles.RoleGuest, "guest@dev.local", "password123"},
 	}
 
 	for _, c := range cases {
-		user := model.User{
+		user := users.User{
 			Email:     c.email,
 			Password:  c.password,
 			FirstName: string(c.role),
 			LastName:  "Dev",
 			RoleID:    mustRoleID(database, c.role),
 		}
-		if err := database.Where(model.User{Email: user.Email}).FirstOrCreate(&user).Error; err != nil {
+		if err := database.Where(users.User{Email: user.Email}).FirstOrCreate(&user).Error; err != nil {
 			log.Printf("skip %s: %v", c.email, err)
 			continue
 		}
@@ -123,8 +124,8 @@ func seedAll(database *gorm.DB) {
 }
 
 // mustRoleID fetches a role ID by name or exits if not found.
-func mustRoleID(database *gorm.DB, role model.UserRole) uint {
-	var r model.Role
+func mustRoleID(database *gorm.DB, role roles.UserRole) uint {
+	var r roles.Role
 	if err := database.Where("name = ?", string(role)).First(&r).Error; err != nil {
 		log.Fatalf("role %q not found — run migrations first", role)
 	}
