@@ -6,8 +6,8 @@ import (
 	"time"
 
 	authv1 "auth-service/gen/auth/v1"
+	"auth-service/internal/domain/users"
 	"auth-service/internal/service"
-	"auth-service/internal/users"
 
 	grpccrud "github.com/Mognus/go-grpc-crud/server"
 	"google.golang.org/grpc/codes"

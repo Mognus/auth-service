@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"time"
 
-	"auth-service/internal/auth"
-	"auth-service/internal/roles"
-	"auth-service/internal/users"
+	"auth-service/internal/domain/auth"
+	"auth-service/internal/domain/users"
+	"auth-service/internal/repository"
 
 	"gorm.io/gorm"
 )
@@ -25,6 +25,7 @@ var (
 
 type AuthService struct {
 	db              *gorm.DB
+	auths           *repository.AuthRepository
 	jwtSecret       string
 	accessTokenTTL  time.Duration
 	refreshTokenTTL time.Duration
@@ -44,6 +45,7 @@ type RefreshResult struct {
 func NewAuthService(db *gorm.DB, jwtSecret string, accessTTL, refreshTTL time.Duration) *AuthService {
 	return &AuthService{
 		db:              db,
+		auths:           repository.NewAuthRepository(db),
 		jwtSecret:       jwtSecret,
 		accessTokenTTL:  accessTTL,
 		refreshTokenTTL: refreshTTL,
@@ -51,8 +53,8 @@ func NewAuthService(db *gorm.DB, jwtSecret string, accessTTL, refreshTTL time.Du
 }
 
 func (s *AuthService) Login(ctx context.Context, email, password string) (*AuthResult, error) {
-	var user users.User
-	if err := s.db.WithContext(ctx).Preload("Role").Where("email = ?", email).First(&user).Error; err != nil {
+	user, err := s.auths.FindUserByEmail(ctx, email)
+	if err != nil {
 		return nil, ErrInvalidCredentials
 	}
 	if !user.Active {
@@ -66,13 +68,12 @@ func (s *AuthService) Login(ctx context.Context, email, password string) (*AuthR
 }
 
 func (s *AuthService) Register(ctx context.Context, email, password, firstName, lastName string) (*AuthResult, error) {
-	var existing users.User
-	if err := s.db.WithContext(ctx).Where("email = ?", email).First(&existing).Error; err == nil {
+	if _, err := s.auths.FindUserByEmail(ctx, email); err == nil {
 		return nil, ErrUserAlreadyExists
 	}
 
-	var defaultRole roles.Role
-	if err := s.db.WithContext(ctx).Where("name = ?", string(roles.RoleUser)).First(&defaultRole).Error; err != nil {
+	defaultRole, err := s.auths.FindDefaultRole(ctx)
+	if err != nil {
 		return nil, ErrDefaultRoleMissing
 	}
 
@@ -84,7 +85,7 @@ func (s *AuthService) Register(ctx context.Context, email, password, firstName, 
 		RoleID:    defaultRole.ID,
 		Active:    true,
 	}
-	if err := s.db.WithContext(ctx).Create(&user).Error; err != nil {
+	if err := s.auths.CreateUser(ctx, &user); err != nil {
 		return nil, fmt.Errorf("%w: %v", ErrCreateUser, err)
 	}
 	user.Role = defaultRole
@@ -93,21 +94,18 @@ func (s *AuthService) Register(ctx context.Context, email, password, firstName, 
 }
 
 func (s *AuthService) RefreshToken(ctx context.Context, refreshToken string) (*RefreshResult, error) {
-	var rt auth.RefreshToken
-	err := s.db.WithContext(ctx).
-		Where("token = ? AND revoked = false AND expires_at > ?", refreshToken, time.Now()).
-		First(&rt).Error
+	rt, err := s.auths.FindValidRefreshToken(ctx, refreshToken)
 	if err != nil {
 		return nil, ErrInvalidRefreshToken
 	}
 
-	var user users.User
-	if err := s.db.WithContext(ctx).Preload("Role").First(&user, rt.UserID).Error; err != nil {
+	user, err := s.auths.FindUserByID(ctx, rt.UserID)
+	if err != nil {
 		return nil, ErrInvalidRefreshToken
 	}
 
 	// Refresh tokens are single-use; keep the existing best-effort revoke behavior.
-	s.db.WithContext(ctx).Model(&rt).Update("revoked", true)
+	s.auths.RevokeRefreshTokenByID(ctx, rt.ID)
 
 	accessToken, newRefreshToken, err := auth.GenerateTokenPair(
 		ctx,
@@ -128,11 +126,7 @@ func (s *AuthService) RefreshToken(ctx context.Context, refreshToken string) (*R
 }
 
 func (s *AuthService) Logout(ctx context.Context, refreshToken string) error {
-	result := s.db.WithContext(ctx).
-		Model(&auth.RefreshToken{}).
-		Where("token = ?", refreshToken).
-		Update("revoked", true)
-	return result.Error
+	return s.auths.RevokeRefreshToken(ctx, refreshToken)
 }
 
 func (s *AuthService) issueTokenPair(ctx context.Context, user *users.User) (*AuthResult, error) {

@@ -3,7 +3,7 @@ package users
 import (
 	"time"
 
-	"auth-service/internal/roles"
+	"auth-service/internal/domain/roles"
 
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"

@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"auth-service/internal/roles"
+	"auth-service/internal/domain/roles"
 
 	grpccrud "github.com/Mognus/go-grpc-crud/server"
 	"gorm.io/gorm"

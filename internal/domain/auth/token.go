@@ -6,7 +6,7 @@ import (
 	"encoding/hex"
 	"time"
 
-	"auth-service/internal/users"
+	"auth-service/internal/domain/users"
 
 	"github.com/golang-jwt/jwt/v5"
 	"gorm.io/gorm"

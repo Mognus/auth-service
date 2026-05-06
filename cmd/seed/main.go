@@ -8,9 +8,9 @@ import (
 	"strconv"
 
 	"auth-service/internal/config"
+	"auth-service/internal/domain/roles"
+	"auth-service/internal/domain/users"
 	"auth-service/internal/platform/db"
-	"auth-service/internal/roles"
-	"auth-service/internal/users"
 
 	"github.com/joho/godotenv"
 	"gorm.io/gorm"
