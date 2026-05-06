@@ -5,6 +5,9 @@ import (
 	"log"
 	"os"
 
+	"auth-service/internal/config"
+	"auth-service/internal/platform/db"
+
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
@@ -18,7 +21,12 @@ func main() {
 		log.Fatal("usage: migrate <up|down|version>")
 	}
 
-	m, err := migrate.New("file://migrations", buildDSN())
+	cfg, err := config.Load()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	m, err := migrate.New("file://migrations", db.MigrateDSN(cfg.Database))
 	if err != nil {
 		log.Fatalf("failed to init migrate: %v", err)
 	}
@@ -44,23 +52,4 @@ func main() {
 	default:
 		log.Fatalf("unknown command: %s", os.Args[1])
 	}
-}
-
-func buildDSN() string {
-	return fmt.Sprintf(
-		"postgres://%s:%s@%s:%s/%s?sslmode=%s",
-		getEnv("DB_USER", "postgres"),
-		getEnv("DB_PASSWORD", "postgres"),
-		getEnv("DB_HOST", "localhost"),
-		getEnv("DB_PORT", "5432"),
-		getEnv("DB_NAME", "app_db"),
-		getEnv("DB_SSLMODE", "disable"),
-	)
-}
-
-func getEnv(key, fallback string) string {
-	if v := os.Getenv(key); v != "" {
-		return v
-	}
-	return fallback
 }

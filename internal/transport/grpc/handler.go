@@ -1,4 +1,4 @@
-package server
+package grpc
 
 import (
 	"errors"
@@ -7,6 +7,7 @@ import (
 	"time"
 
 	authv1 "auth-service/gen/auth/v1"
+	"auth-service/internal/service"
 
 	protovalidate "buf.build/go/protovalidate"
 	"google.golang.org/grpc/codes"
@@ -17,11 +18,10 @@ import (
 
 type Handler struct {
 	authv1.UnimplementedAuthServiceServer
-	db              *gorm.DB
-	jwtSecret       string
-	accessTokenTTL  time.Duration
-	refreshTokenTTL time.Duration
-	validator       protovalidate.Validator
+	validator   protovalidate.Validator
+	authService *service.AuthService
+	roleService *service.RoleService
+	userService *service.UserService
 }
 
 func New(db *gorm.DB, jwtSecret string, accessTTL, refreshTTL time.Duration) *Handler {
@@ -31,11 +31,10 @@ func New(db *gorm.DB, jwtSecret string, accessTTL, refreshTTL time.Duration) *Ha
 	}
 
 	return &Handler{
-		db:              db,
-		jwtSecret:       jwtSecret,
-		accessTokenTTL:  accessTTL,
-		refreshTokenTTL: refreshTTL,
-		validator:       v,
+		validator:   v,
+		authService: service.NewAuthService(db, jwtSecret, accessTTL, refreshTTL),
+		roleService: service.NewRoleService(db),
+		userService: service.NewUserService(db),
 	}
 }
 

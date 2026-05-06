@@ -1,4 +1,4 @@
-package server
+package grpc
 
 import (
 	"context"
@@ -6,6 +6,7 @@ import (
 	"time"
 
 	authv1 "auth-service/gen/auth/v1"
+	"auth-service/internal/service"
 	"auth-service/internal/users"
 
 	grpccrud "github.com/Mognus/go-grpc-crud/server"
@@ -14,15 +15,8 @@ import (
 	"gorm.io/gorm"
 )
 
-var userListConfig = grpccrud.ListConfig{
-	Preloads:        []string{"Role"},
-	Searchable:      []string{"email", "first_name", "last_name"},
-	SortableColumns: []string{"id", "email", "first_name", "last_name", "created_at", "updated_at", "active"},
-	DefaultSort:     "id ASC",
-}
-
 func (h *Handler) GetUser(ctx context.Context, req *authv1.GetUserRequest) (*authv1.GetUserResponse, error) {
-	user, err := grpccrud.DefaultGet[users.User](ctx, h.db, req.Id, "Role")
+	user, err := h.userService.Get(ctx, req.Id)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, status.Error(codes.NotFound, "user")
@@ -33,10 +27,10 @@ func (h *Handler) GetUser(ctx context.Context, req *authv1.GetUserRequest) (*aut
 }
 
 func (h *Handler) ListUsers(ctx context.Context, req *authv1.ListUsersRequest) (*authv1.ListUsersResponse, error) {
-	result, total, err := grpccrud.DefaultList[users.User](ctx, h.db, grpccrud.ListRequest{
+	result, total, err := h.userService.List(ctx, grpccrud.ListRequest{
 		Page: req.Page, Limit: req.Limit, Search: req.Search,
 		Filters: req.Filters, SortBy: req.SortBy, SortOrder: req.SortOrder,
-	}, userListConfig)
+	})
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
@@ -53,14 +47,14 @@ func (h *Handler) CreateUser(ctx context.Context, req *authv1.CreateUserRequest)
 		return nil, err
 	}
 
-	user, err := grpccrud.DefaultCreate(ctx, h.db, &users.User{
+	user, err := h.userService.Create(ctx, service.CreateUserInput{
 		Email:     req.Email,
 		Password:  req.Password,
 		FirstName: req.FirstName,
 		LastName:  req.LastName,
 		RoleID:    uint(req.RoleId),
 		Active:    req.Active,
-	}, "Role")
+	})
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
@@ -72,18 +66,14 @@ func (h *Handler) UpdateUser(ctx context.Context, req *authv1.UpdateUserRequest)
 		return nil, err
 	}
 
-	updates := map[string]any{
-		"email":      req.Email,
-		"first_name": req.FirstName,
-		"last_name":  req.LastName,
-		"role_id":    req.RoleId,
-		"active":     req.Active,
-	}
-	if req.Password != "" {
-		updates["password"] = req.Password
-	}
-
-	user, err := grpccrud.DefaultUpdate[users.User](ctx, h.db, req.Id, updates, "Role")
+	user, err := h.userService.Update(ctx, req.Id, service.UpdateUserInput{
+		Email:     req.Email,
+		Password:  req.Password,
+		FirstName: req.FirstName,
+		LastName:  req.LastName,
+		RoleID:    req.RoleId,
+		Active:    req.Active,
+	})
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, status.Error(codes.NotFound, "user")
@@ -94,7 +84,7 @@ func (h *Handler) UpdateUser(ctx context.Context, req *authv1.UpdateUserRequest)
 }
 
 func (h *Handler) DeleteUser(ctx context.Context, req *authv1.DeleteUserRequest) (*authv1.DeleteUserResponse, error) {
-	if err := grpccrud.DefaultDelete(ctx, h.db, &users.User{}, req.Id); err != nil {
+	if err := h.userService.Delete(ctx, req.Id); err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 	return &authv1.DeleteUserResponse{Success: true}, nil

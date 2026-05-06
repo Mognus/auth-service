@@ -5,12 +5,11 @@ import (
 	"log"
 	"log/slog"
 	"net"
-	"os"
-	"time"
 
 	authv1 "auth-service/gen/auth/v1"
-	"auth-service/internal/db"
-	"auth-service/internal/server"
+	"auth-service/internal/config"
+	"auth-service/internal/platform/db"
+	grpcserver "auth-service/internal/transport/grpc"
 
 	"github.com/joho/godotenv"
 	"google.golang.org/grpc"
@@ -21,34 +20,25 @@ import (
 func main() {
 	godotenv.Load()
 
-	database, err := db.Connect()
+	cfg, err := config.Load()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	database, err := db.Connect(cfg.Database)
 	if err != nil {
 		log.Fatalf("failed to connect to database: %v", err)
 	}
 
-	jwtSecret := os.Getenv("JWT_SECRET")
-	if jwtSecret == "" {
-		log.Fatal("JWT_SECRET is required")
-	}
-
-	accessTTL, err := time.ParseDuration(os.Getenv("JWT_ACCESS_TTL"))
-	if err != nil {
-		accessTTL = 15 * time.Minute
-	}
-	refreshTTL, err := time.ParseDuration(os.Getenv("JWT_REFRESH_TTL"))
-	if err != nil {
-		refreshTTL = 7 * 24 * time.Hour
-	}
-
-	lis, err := net.Listen("tcp", ":50051")
+	lis, err := net.Listen("tcp", cfg.Server.Addr)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
 	s := grpc.NewServer(grpc.ChainUnaryInterceptor(recoveryInterceptor, loggingInterceptor))
-	authv1.RegisterAuthServiceServer(s, server.New(database, jwtSecret, accessTTL, refreshTTL))
+	authv1.RegisterAuthServiceServer(s, grpcserver.New(database, cfg.JWT.Secret, cfg.JWT.AccessTTL, cfg.JWT.RefreshTTL))
 
-	log.Println("auth-service listening on :50051")
+	log.Printf("auth-service listening on %s", cfg.Server.Addr)
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}

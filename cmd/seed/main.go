@@ -7,7 +7,8 @@ import (
 	"os"
 	"strconv"
 
-	"auth-service/internal/db"
+	"auth-service/internal/config"
+	"auth-service/internal/platform/db"
 	"auth-service/internal/roles"
 	"auth-service/internal/users"
 
@@ -23,7 +24,12 @@ func main() {
 		os.Exit(1)
 	}
 
-	database, err := db.Connect()
+	cfg, err := config.Load()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	database, err := db.Connect(cfg.Database)
 	if err != nil {
 		log.Fatalf("db connect: %v", err)
 	}
