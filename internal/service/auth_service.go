@@ -24,7 +24,6 @@ var (
 )
 
 type AuthService struct {
-	db              *gorm.DB
 	auths           *repository.AuthRepository
 	jwtSecret       string
 	accessTokenTTL  time.Duration
@@ -44,7 +43,6 @@ type RefreshResult struct {
 
 func NewAuthService(db *gorm.DB, jwtSecret string, accessTTL, refreshTTL time.Duration) *AuthService {
 	return &AuthService{
-		db:              db,
 		auths:           repository.NewAuthRepository(db),
 		jwtSecret:       jwtSecret,
 		accessTokenTTL:  accessTTL,
@@ -107,14 +105,7 @@ func (s *AuthService) RefreshToken(ctx context.Context, refreshToken string) (*R
 	// Refresh tokens are single-use; keep the existing best-effort revoke behavior.
 	s.auths.RevokeRefreshTokenByID(ctx, rt.ID)
 
-	accessToken, newRefreshToken, err := auth.GenerateTokenPair(
-		ctx,
-		s.db,
-		s.jwtSecret,
-		s.accessTokenTTL,
-		s.refreshTokenTTL,
-		&user,
-	)
+	accessToken, newRefreshToken, err := s.issueTokens(ctx, &user)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", ErrGenerateTokens, err)
 	}
@@ -130,14 +121,7 @@ func (s *AuthService) Logout(ctx context.Context, refreshToken string) error {
 }
 
 func (s *AuthService) issueTokenPair(ctx context.Context, user *users.User) (*AuthResult, error) {
-	accessToken, refreshToken, err := auth.GenerateTokenPair(
-		ctx,
-		s.db,
-		s.jwtSecret,
-		s.accessTokenTTL,
-		s.refreshTokenTTL,
-		user,
-	)
+	accessToken, refreshToken, err := s.issueTokens(ctx, user)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", ErrGenerateTokens, err)
 	}
@@ -147,4 +131,27 @@ func (s *AuthService) issueTokenPair(ctx context.Context, user *users.User) (*Au
 		RefreshToken: refreshToken,
 		User:         user,
 	}, nil
+}
+
+func (s *AuthService) issueTokens(ctx context.Context, user *users.User) (accessToken, refreshToken string, err error) {
+	accessToken, err = auth.GenerateAccessToken(s.jwtSecret, s.accessTokenTTL, user)
+	if err != nil {
+		return "", "", err
+	}
+
+	refreshToken, err = auth.GenerateRefreshToken()
+	if err != nil {
+		return "", "", err
+	}
+
+	err = s.auths.CreateRefreshToken(ctx, &auth.RefreshToken{
+		UserID:    user.ID,
+		Token:     refreshToken,
+		ExpiresAt: time.Now().Add(s.refreshTokenTTL),
+	})
+	if err != nil {
+		return "", "", err
+	}
+
+	return accessToken, refreshToken, nil
 }

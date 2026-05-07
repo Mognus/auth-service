@@ -41,6 +41,10 @@ func (r *AuthRepository) CreateUser(ctx context.Context, user *users.User) error
 	return r.db.WithContext(ctx).Create(user).Error
 }
 
+func (r *AuthRepository) CreateRefreshToken(ctx context.Context, refreshToken *auth.RefreshToken) error {
+	return r.db.WithContext(ctx).Create(refreshToken).Error
+}
+
 func (r *AuthRepository) FindValidRefreshToken(ctx context.Context, token string) (auth.RefreshToken, error) {
 	var refreshToken auth.RefreshToken
 	err := r.db.WithContext(ctx).
