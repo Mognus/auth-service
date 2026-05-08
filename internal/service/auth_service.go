@@ -8,6 +8,7 @@ import (
 
 	"auth-service/internal/domain/auth"
 	"auth-service/internal/domain/users"
+	"auth-service/internal/platform/token"
 	"auth-service/internal/repository"
 
 	"gorm.io/gorm"
@@ -134,12 +135,12 @@ func (s *AuthService) issueTokenPair(ctx context.Context, user *users.User) (*Au
 }
 
 func (s *AuthService) issueTokens(ctx context.Context, user *users.User) (accessToken, refreshToken string, err error) {
-	accessToken, err = auth.GenerateAccessToken(s.jwtSecret, s.accessTokenTTL, user)
+	accessToken, err = token.GenerateAccessToken(s.jwtSecret, s.accessTokenTTL, user)
 	if err != nil {
 		return "", "", err
 	}
 
-	refreshToken, err = auth.GenerateRefreshToken()
+	refreshToken, err = token.GenerateRefreshToken()
 	if err != nil {
 		return "", "", err
 	}
