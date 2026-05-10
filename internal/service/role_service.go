@@ -11,7 +11,8 @@ import (
 
 var roleListConfig = grpccrud.ListConfig{
 	Searchable:      []string{"name"},
-	SortableColumns: []string{"id", "name", "created_at", "updated_at"},
+	Filterable:      []string{"name"},
+	SortableColumns: []string{"id", "name", "createdAt", "updatedAt"},
 	DefaultSort:     "id ASC",
 }
 
