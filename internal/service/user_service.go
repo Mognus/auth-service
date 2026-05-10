@@ -12,7 +12,7 @@ import (
 var userListConfig = grpccrud.ListConfig{
 	Preloads:        []string{"Role"},
 	Searchable:      []string{"email", "first_name", "last_name"},
-	Filterable:      []string{"email", "firstName", "lastName", "active", "roleId"},
+	Filterable:      []string{"id", "email", "firstName", "lastName", "active", "roleId"},
 	SortableColumns: []string{"id", "email", "firstName", "lastName", "active", "createdAt", "updatedAt"},
 	DefaultSort:     "id ASC",
 }
