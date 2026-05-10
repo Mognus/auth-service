@@ -8,6 +8,7 @@ package authv1
 
 import (
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
+	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -1698,7 +1699,7 @@ var File_auth_v1_auth_proto protoreflect.FileDescriptor
 
 const file_auth_v1_auth_proto_rawDesc = "" +
 	"\n" +
-	"\x12auth/v1/auth.proto\x12\aauth.v1\x1a\x1bbuf/validate/validate.proto\"W\n" +
+	"\x12auth/v1/auth.proto\x12\aauth.v1\x1a\x1bbuf/validate/validate.proto\x1a\x1cgoogle/api/annotations.proto\"W\n" +
 	"\fLoginRequest\x12 \n" +
 	"\x05email\x18\x01 \x01(\tB\n" +
 	"\xbaH\ar\x05\x18\xfe\x01`\x01R\x05email\x12%\n" +
@@ -1823,28 +1824,28 @@ const file_auth_v1_auth_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\x03 \x01(\tR\tcreatedAt\x12\x1d\n" +
 	"\n" +
-	"updated_at\x18\x04 \x01(\tR\tupdatedAt2\xbc\a\n" +
-	"\vAuthService\x126\n" +
-	"\x05Login\x12\x15.auth.v1.LoginRequest\x1a\x16.auth.v1.LoginResponse\x12?\n" +
-	"\bRegister\x12\x18.auth.v1.RegisterRequest\x1a\x19.auth.v1.RegisterResponse\x12K\n" +
-	"\fRefreshToken\x12\x1c.auth.v1.RefreshTokenRequest\x1a\x1d.auth.v1.RefreshTokenResponse\x129\n" +
-	"\x06Logout\x12\x16.auth.v1.LogoutRequest\x1a\x17.auth.v1.LogoutResponse\x12<\n" +
-	"\aGetUser\x12\x17.auth.v1.GetUserRequest\x1a\x18.auth.v1.GetUserResponse\x12B\n" +
-	"\tListUsers\x12\x19.auth.v1.ListUsersRequest\x1a\x1a.auth.v1.ListUsersResponse\x12E\n" +
+	"updated_at\x18\x04 \x01(\tR\tupdatedAt2\x92\v\n" +
+	"\vAuthService\x12R\n" +
+	"\x05Login\x12\x15.auth.v1.LoginRequest\x1a\x16.auth.v1.LoginResponse\"\x1a\x82\xd3\xe4\x93\x02\x14:\x01*\"\x0f/api/auth/login\x12^\n" +
+	"\bRegister\x12\x18.auth.v1.RegisterRequest\x1a\x19.auth.v1.RegisterResponse\"\x1d\x82\xd3\xe4\x93\x02\x17:\x01*\"\x12/api/auth/register\x12i\n" +
+	"\fRefreshToken\x12\x1c.auth.v1.RefreshTokenRequest\x1a\x1d.auth.v1.RefreshTokenResponse\"\x1c\x82\xd3\xe4\x93\x02\x16:\x01*\"\x11/api/auth/refresh\x12V\n" +
+	"\x06Logout\x12\x16.auth.v1.LogoutRequest\x1a\x17.auth.v1.LogoutResponse\"\x1b\x82\xd3\xe4\x93\x02\x15:\x01*\"\x10/api/auth/logout\x12a\n" +
+	"\tListUsers\x12\x19.auth.v1.ListUsersRequest\x1a\x1a.auth.v1.ListUsersResponse\"\x1d\x82\xd3\xe4\x93\x02\x17\x12\x15/api/admin/auth/users\x12`\n" +
+	"\aGetUser\x12\x17.auth.v1.GetUserRequest\x1a\x18.auth.v1.GetUserResponse\"\"\x82\xd3\xe4\x93\x02\x1c\x12\x1a/api/admin/auth/users/{id}\x12g\n" +
 	"\n" +
-	"CreateUser\x12\x1a.auth.v1.CreateUserRequest\x1a\x1b.auth.v1.CreateUserResponse\x12E\n" +
+	"CreateUser\x12\x1a.auth.v1.CreateUserRequest\x1a\x1b.auth.v1.CreateUserResponse\" \x82\xd3\xe4\x93\x02\x1a:\x01*\"\x15/api/admin/auth/users\x12l\n" +
 	"\n" +
-	"UpdateUser\x12\x1a.auth.v1.UpdateUserRequest\x1a\x1b.auth.v1.UpdateUserResponse\x12E\n" +
+	"UpdateUser\x12\x1a.auth.v1.UpdateUserRequest\x1a\x1b.auth.v1.UpdateUserResponse\"%\x82\xd3\xe4\x93\x02\x1f:\x01*\x1a\x1a/api/admin/auth/users/{id}\x12i\n" +
 	"\n" +
-	"DeleteUser\x12\x1a.auth.v1.DeleteUserRequest\x1a\x1b.auth.v1.DeleteUserResponse\x12<\n" +
-	"\aGetRole\x12\x17.auth.v1.GetRoleRequest\x1a\x18.auth.v1.GetRoleResponse\x12B\n" +
-	"\tListRoles\x12\x19.auth.v1.ListRolesRequest\x1a\x1a.auth.v1.ListRolesResponse\x12E\n" +
+	"DeleteUser\x12\x1a.auth.v1.DeleteUserRequest\x1a\x1b.auth.v1.DeleteUserResponse\"\"\x82\xd3\xe4\x93\x02\x1c*\x1a/api/admin/auth/users/{id}\x12a\n" +
+	"\tListRoles\x12\x19.auth.v1.ListRolesRequest\x1a\x1a.auth.v1.ListRolesResponse\"\x1d\x82\xd3\xe4\x93\x02\x17\x12\x15/api/admin/auth/roles\x12`\n" +
+	"\aGetRole\x12\x17.auth.v1.GetRoleRequest\x1a\x18.auth.v1.GetRoleResponse\"\"\x82\xd3\xe4\x93\x02\x1c\x12\x1a/api/admin/auth/roles/{id}\x12g\n" +
 	"\n" +
-	"CreateRole\x12\x1a.auth.v1.CreateRoleRequest\x1a\x1b.auth.v1.CreateRoleResponse\x12E\n" +
+	"CreateRole\x12\x1a.auth.v1.CreateRoleRequest\x1a\x1b.auth.v1.CreateRoleResponse\" \x82\xd3\xe4\x93\x02\x1a:\x01*\"\x15/api/admin/auth/roles\x12l\n" +
 	"\n" +
-	"UpdateRole\x12\x1a.auth.v1.UpdateRoleRequest\x1a\x1b.auth.v1.UpdateRoleResponse\x12E\n" +
+	"UpdateRole\x12\x1a.auth.v1.UpdateRoleRequest\x1a\x1b.auth.v1.UpdateRoleResponse\"%\x82\xd3\xe4\x93\x02\x1f:\x01*\x1a\x1a/api/admin/auth/roles/{id}\x12i\n" +
 	"\n" +
-	"DeleteRole\x12\x1a.auth.v1.DeleteRoleRequest\x1a\x1b.auth.v1.DeleteRoleResponseB!Z\x1fauth-service/gen/auth/v1;authv1b\x06proto3"
+	"DeleteRole\x12\x1a.auth.v1.DeleteRoleRequest\x1a\x1b.auth.v1.DeleteRoleResponse\"\"\x82\xd3\xe4\x93\x02\x1c*\x1a/api/admin/auth/roles/{id}B!Z\x1fauth-service/gen/auth/v1;authv1b\x06proto3"
 
 var (
 	file_auth_v1_auth_proto_rawDescOnce sync.Once
@@ -1911,13 +1912,13 @@ var file_auth_v1_auth_proto_depIdxs = []int32{
 	2,  // 14: auth.v1.AuthService.Register:input_type -> auth.v1.RegisterRequest
 	4,  // 15: auth.v1.AuthService.RefreshToken:input_type -> auth.v1.RefreshTokenRequest
 	6,  // 16: auth.v1.AuthService.Logout:input_type -> auth.v1.LogoutRequest
-	8,  // 17: auth.v1.AuthService.GetUser:input_type -> auth.v1.GetUserRequest
-	9,  // 18: auth.v1.AuthService.ListUsers:input_type -> auth.v1.ListUsersRequest
+	9,  // 17: auth.v1.AuthService.ListUsers:input_type -> auth.v1.ListUsersRequest
+	8,  // 18: auth.v1.AuthService.GetUser:input_type -> auth.v1.GetUserRequest
 	11, // 19: auth.v1.AuthService.CreateUser:input_type -> auth.v1.CreateUserRequest
 	12, // 20: auth.v1.AuthService.UpdateUser:input_type -> auth.v1.UpdateUserRequest
 	13, // 21: auth.v1.AuthService.DeleteUser:input_type -> auth.v1.DeleteUserRequest
-	19, // 22: auth.v1.AuthService.GetRole:input_type -> auth.v1.GetRoleRequest
-	20, // 23: auth.v1.AuthService.ListRoles:input_type -> auth.v1.ListRolesRequest
+	20, // 22: auth.v1.AuthService.ListRoles:input_type -> auth.v1.ListRolesRequest
+	19, // 23: auth.v1.AuthService.GetRole:input_type -> auth.v1.GetRoleRequest
 	22, // 24: auth.v1.AuthService.CreateRole:input_type -> auth.v1.CreateRoleRequest
 	23, // 25: auth.v1.AuthService.UpdateRole:input_type -> auth.v1.UpdateRoleRequest
 	24, // 26: auth.v1.AuthService.DeleteRole:input_type -> auth.v1.DeleteRoleRequest
@@ -1925,13 +1926,13 @@ var file_auth_v1_auth_proto_depIdxs = []int32{
 	3,  // 28: auth.v1.AuthService.Register:output_type -> auth.v1.RegisterResponse
 	5,  // 29: auth.v1.AuthService.RefreshToken:output_type -> auth.v1.RefreshTokenResponse
 	7,  // 30: auth.v1.AuthService.Logout:output_type -> auth.v1.LogoutResponse
-	14, // 31: auth.v1.AuthService.GetUser:output_type -> auth.v1.GetUserResponse
-	10, // 32: auth.v1.AuthService.ListUsers:output_type -> auth.v1.ListUsersResponse
+	10, // 31: auth.v1.AuthService.ListUsers:output_type -> auth.v1.ListUsersResponse
+	14, // 32: auth.v1.AuthService.GetUser:output_type -> auth.v1.GetUserResponse
 	15, // 33: auth.v1.AuthService.CreateUser:output_type -> auth.v1.CreateUserResponse
 	16, // 34: auth.v1.AuthService.UpdateUser:output_type -> auth.v1.UpdateUserResponse
 	17, // 35: auth.v1.AuthService.DeleteUser:output_type -> auth.v1.DeleteUserResponse
-	25, // 36: auth.v1.AuthService.GetRole:output_type -> auth.v1.GetRoleResponse
-	21, // 37: auth.v1.AuthService.ListRoles:output_type -> auth.v1.ListRolesResponse
+	21, // 36: auth.v1.AuthService.ListRoles:output_type -> auth.v1.ListRolesResponse
+	25, // 37: auth.v1.AuthService.GetRole:output_type -> auth.v1.GetRoleResponse
 	26, // 38: auth.v1.AuthService.CreateRole:output_type -> auth.v1.CreateRoleResponse
 	27, // 39: auth.v1.AuthService.UpdateRole:output_type -> auth.v1.UpdateRoleResponse
 	28, // 40: auth.v1.AuthService.DeleteRole:output_type -> auth.v1.DeleteRoleResponse

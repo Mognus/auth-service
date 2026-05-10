@@ -3,11 +3,16 @@ package grpc
 import (
 	"context"
 	"errors"
+	"net/http"
+	"strings"
+	"time"
 
 	authv1 "auth-service/gen/auth/v1"
 	"auth-service/internal/service"
 
+	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 )
 
@@ -20,6 +25,8 @@ func (h *Handler) Login(ctx context.Context, req *authv1.LoginRequest) (*authv1.
 	if err != nil {
 		return nil, authErrorToStatus(err)
 	}
+
+	setTokenCookies(ctx, result.AccessToken, result.RefreshToken)
 
 	return &authv1.LoginResponse{
 		AccessToken:  result.AccessToken,
@@ -38,6 +45,8 @@ func (h *Handler) Register(ctx context.Context, req *authv1.RegisterRequest) (*a
 		return nil, authErrorToStatus(err)
 	}
 
+	setTokenCookies(ctx, result.AccessToken, result.RefreshToken)
+
 	return &authv1.RegisterResponse{
 		AccessToken:  result.AccessToken,
 		RefreshToken: result.RefreshToken,
@@ -46,10 +55,17 @@ func (h *Handler) Register(ctx context.Context, req *authv1.RegisterRequest) (*a
 }
 
 func (h *Handler) RefreshToken(ctx context.Context, req *authv1.RefreshTokenRequest) (*authv1.RefreshTokenResponse, error) {
-	result, err := h.authService.RefreshToken(ctx, req.RefreshToken)
+	token := req.RefreshToken
+	if token == "" {
+		token = cookieFromMetadata(ctx, "refresh_token")
+	}
+
+	result, err := h.authService.RefreshToken(ctx, token)
 	if err != nil {
 		return nil, authErrorToStatus(err)
 	}
+
+	setTokenCookies(ctx, result.AccessToken, result.RefreshToken)
 
 	return &authv1.RefreshTokenResponse{
 		AccessToken:  result.AccessToken,
@@ -58,11 +74,60 @@ func (h *Handler) RefreshToken(ctx context.Context, req *authv1.RefreshTokenRequ
 }
 
 func (h *Handler) Logout(ctx context.Context, req *authv1.LogoutRequest) (*authv1.LogoutResponse, error) {
-	if err := h.authService.Logout(ctx, req.RefreshToken); err != nil {
-		return nil, status.Error(codes.Internal, err.Error())
+	token := req.RefreshToken
+	if token == "" {
+		token = cookieFromMetadata(ctx, "refresh_token")
 	}
 
+	if token != "" {
+		h.authService.Logout(ctx, token)
+	}
+
+	clearCookies(ctx)
+
 	return &authv1.LogoutResponse{Success: true}, nil
+}
+
+func setTokenCookies(ctx context.Context, accessToken, refreshToken string) {
+	grpc.SetHeader(ctx, metadata.Pairs(
+		"set-cookie", cookieString("access_token", accessToken, 15*time.Minute),
+		"set-cookie", cookieString("refresh_token", refreshToken, 7*24*time.Hour),
+	))
+}
+
+func clearCookies(ctx context.Context) {
+	grpc.SetHeader(ctx, metadata.Pairs(
+		"set-cookie", cookieString("access_token", "", -time.Hour),
+		"set-cookie", cookieString("refresh_token", "", -time.Hour),
+	))
+}
+
+func cookieString(name, value string, maxAge time.Duration) string {
+	c := http.Cookie{
+		Name:     name,
+		Value:    value,
+		HttpOnly: true,
+		SameSite: http.SameSiteLaxMode,
+		Path:     "/",
+		MaxAge:   int(maxAge.Seconds()),
+	}
+	return c.String()
+}
+
+func cookieFromMetadata(ctx context.Context, name string) string {
+	md, ok := metadata.FromIncomingContext(ctx)
+	if !ok {
+		return ""
+	}
+	for _, raw := range md.Get("cookie") {
+		for _, part := range strings.Split(raw, ";") {
+			part = strings.TrimSpace(part)
+			if k, v, ok := strings.Cut(part, "="); ok && strings.TrimSpace(k) == name {
+				return strings.TrimSpace(v)
+			}
+		}
+	}
+	return ""
 }
 
 func authErrorToStatus(err error) error {

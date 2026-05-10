@@ -3,29 +3,94 @@ syntax = "proto3";
 package auth.v1;
 
 import "buf/validate/validate.proto";
+import "google/api/annotations.proto";
 
 option go_package = "auth-service/gen/auth/v1;authv1";
 
 service AuthService {
   // Auth
-  rpc Login(LoginRequest)               returns (LoginResponse);
-  rpc Register(RegisterRequest)         returns (RegisterResponse);
-  rpc RefreshToken(RefreshTokenRequest) returns (RefreshTokenResponse);
-  rpc Logout(LogoutRequest)             returns (LogoutResponse);
+  rpc Login(LoginRequest) returns (LoginResponse) {
+    option (google.api.http) = {
+      post: "/api/auth/login"
+      body: "*"
+    };
+  }
+  rpc Register(RegisterRequest) returns (RegisterResponse) {
+    option (google.api.http) = {
+      post: "/api/auth/register"
+      body: "*"
+    };
+  }
+  rpc RefreshToken(RefreshTokenRequest) returns (RefreshTokenResponse) {
+    option (google.api.http) = {
+      post: "/api/auth/refresh"
+      body: "*"
+    };
+  }
+  rpc Logout(LogoutRequest) returns (LogoutResponse) {
+    option (google.api.http) = {
+      post: "/api/auth/logout"
+      body: "*"
+    };
+  }
 
   // Users
-  rpc GetUser(GetUserRequest)       returns (GetUserResponse);
-  rpc ListUsers(ListUsersRequest)   returns (ListUsersResponse);
-  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
-  rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse);
-  rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse);
+  rpc ListUsers(ListUsersRequest) returns (ListUsersResponse) {
+    option (google.api.http) = {
+      get: "/api/admin/auth/users"
+    };
+  }
+  rpc GetUser(GetUserRequest) returns (GetUserResponse) {
+    option (google.api.http) = {
+      get: "/api/admin/auth/users/{id}"
+    };
+  }
+  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse) {
+    option (google.api.http) = {
+      post: "/api/admin/auth/users"
+      body: "*"
+    };
+  }
+  rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse) {
+    option (google.api.http) = {
+      put: "/api/admin/auth/users/{id}"
+      body: "*"
+    };
+  }
+  rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse) {
+    option (google.api.http) = {
+      delete: "/api/admin/auth/users/{id}"
+    };
+  }
 
   // Roles
-  rpc GetRole(GetRoleRequest)       returns (GetRoleResponse);
-  rpc ListRoles(ListRolesRequest)   returns (ListRolesResponse);
-  rpc CreateRole(CreateRoleRequest) returns (CreateRoleResponse);
-  rpc UpdateRole(UpdateRoleRequest) returns (UpdateRoleResponse);
-  rpc DeleteRole(DeleteRoleRequest) returns (DeleteRoleResponse);
+  rpc ListRoles(ListRolesRequest) returns (ListRolesResponse) {
+    option (google.api.http) = {
+      get: "/api/admin/auth/roles"
+    };
+  }
+  rpc GetRole(GetRoleRequest) returns (GetRoleResponse) {
+    option (google.api.http) = {
+      get: "/api/admin/auth/roles/{id}"
+    };
+  }
+  rpc CreateRole(CreateRoleRequest) returns (CreateRoleResponse) {
+    option (google.api.http) = {
+      post: "/api/admin/auth/roles"
+      body: "*"
+    };
+  }
+  rpc UpdateRole(UpdateRoleRequest) returns (UpdateRoleResponse) {
+    option (google.api.http) = {
+      put: "/api/admin/auth/roles/{id}"
+      body: "*"
+    };
+  }
+  rpc DeleteRole(DeleteRoleRequest) returns (DeleteRoleResponse) {
+    option (google.api.http) = {
+      delete: "/api/admin/auth/roles/{id}"
+    };
+  }
 }
 
 // --- Auth ---
