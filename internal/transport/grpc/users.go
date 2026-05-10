@@ -56,6 +56,9 @@ func (h *Handler) CreateUser(ctx context.Context, req *authv1.CreateUserRequest)
 		Active:    req.Active,
 	})
 	if err != nil {
+		if errors.Is(err, service.ErrUserAlreadyExists) {
+			return nil, status.Error(codes.AlreadyExists, "user with this email already exists")
+		}
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 	return &authv1.CreateUserResponse{User: toUserResponse(user)}, nil

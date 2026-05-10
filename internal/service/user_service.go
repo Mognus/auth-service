@@ -2,10 +2,12 @@ package service
 
 import (
 	"context"
+	"errors"
 
 	"auth-service/internal/domain/users"
 
 	grpccrud "github.com/Mognus/go-grpc-crud/server"
+	"github.com/jackc/pgx/v5/pgconn"
 	"gorm.io/gorm"
 )
 
@@ -52,7 +54,7 @@ func (s *UserService) List(ctx context.Context, req grpccrud.ListRequest) ([]use
 }
 
 func (s *UserService) Create(ctx context.Context, input CreateUserInput) (*users.User, error) {
-	return grpccrud.DefaultCreate(ctx, s.db, &users.User{
+	user, err := grpccrud.DefaultCreate(ctx, s.db, &users.User{
 		Email:     input.Email,
 		Password:  input.Password,
 		FirstName: input.FirstName,
@@ -60,6 +62,14 @@ func (s *UserService) Create(ctx context.Context, input CreateUserInput) (*users
 		RoleID:    input.RoleID,
 		Active:    &input.Active,
 	}, "Role")
+	if err != nil {
+		if isUniqueConstraintViolation(err, "users_email_key") {
+			return nil, ErrUserAlreadyExists
+		}
+		return nil, err
+	}
+
+	return user, nil
 }
 
 func (s *UserService) Update(ctx context.Context, id uint64, input UpdateUserInput) (*users.User, error) {
@@ -79,4 +89,13 @@ func (s *UserService) Update(ctx context.Context, id uint64, input UpdateUserInp
 
 func (s *UserService) Delete(ctx context.Context, id uint64) error {
 	return grpccrud.DefaultDelete(ctx, s.db, &users.User{}, id)
+}
+
+func isUniqueConstraintViolation(err error, constraintName string) bool {
+	var pgErr *pgconn.PgError
+	if !errors.As(err, &pgErr) {
+		return false
+	}
+
+	return pgErr.Code == "23505" && pgErr.ConstraintName == constraintName
 }
