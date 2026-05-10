@@ -49,7 +49,7 @@ func (p *UserProvider) GetSchema() libcrud.Schema {
 				{Name: "createdAt", Type: "date", Label: "Created", Readonly: true},
 				{Name: "updatedAt", Type: "date", Label: "Updated", Readonly: true},
 			},
-			Searchable: []string{"email", "first_name", "last_name"},
+			Searchable: []string{"email", "firstName", "lastName"},
 		}
 	})
 	return p.schema

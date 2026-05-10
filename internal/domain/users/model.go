@@ -13,13 +13,13 @@ type User struct {
 	ID        uint       `gorm:"primaryKey" json:"id"`
 	Email     string     `gorm:"uniqueIndex;size:255;not null" json:"email"`
 	Password  string     `gorm:"size:255;not null" json:"-"`
-	FirstName string     `gorm:"size:100" json:"first_name"`
-	LastName  string     `gorm:"size:100" json:"last_name"`
-	RoleID    uint       `gorm:"not null;default:2;constraint:OnUpdate:CASCADE,OnDelete:RESTRICT" json:"role_id"`
+	FirstName string     `gorm:"size:100" json:"firstName"`
+	LastName  string     `gorm:"size:100" json:"lastName"`
+	RoleID    uint       `gorm:"not null;default:2;constraint:OnUpdate:CASCADE,OnDelete:RESTRICT" json:"roleId"`
 	Role      roles.Role `gorm:"foreignKey:RoleID" json:"role"`
 	Active    bool       `gorm:"default:true" json:"active"`
-	CreatedAt time.Time  `json:"created_at"`
-	UpdatedAt time.Time  `json:"updated_at"`
+	CreatedAt time.Time  `json:"createdAt"`
+	UpdatedAt time.Time  `json:"updatedAt"`
 }
 
 func (User) TableName() string {
