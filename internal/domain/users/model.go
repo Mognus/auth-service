@@ -17,9 +17,10 @@ type User struct {
 	LastName  string     `gorm:"size:100" json:"lastName"`
 	RoleID    uint       `gorm:"not null;default:2;constraint:OnUpdate:CASCADE,OnDelete:RESTRICT" json:"roleId"`
 	Role      roles.Role `gorm:"foreignKey:RoleID" json:"role"`
-	Active    bool       `gorm:"default:true" json:"active"`
-	CreatedAt time.Time  `json:"createdAt"`
-	UpdatedAt time.Time  `json:"updatedAt"`
+	// Pointer keeps explicit false values from being dropped when GORM sees the DB default.
+	Active    *bool     `gorm:"not null;default:true" json:"active"`
+	CreatedAt time.Time `json:"createdAt"`
+	UpdatedAt time.Time `json:"updatedAt"`
 }
 
 func (User) TableName() string {

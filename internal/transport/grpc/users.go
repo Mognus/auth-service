@@ -98,7 +98,7 @@ func toUserResponse(user *users.User) *authv1.UserResponse {
 		LastName:  user.LastName,
 		RoleId:    uint64(user.RoleID),
 		Role:      toRoleResponse(&user.Role),
-		Active:    user.Active,
+		Active:    user.Active != nil && *user.Active,
 		CreatedAt: user.CreatedAt.Format(time.RFC3339),
 		UpdatedAt: user.UpdatedAt.Format(time.RFC3339),
 	}

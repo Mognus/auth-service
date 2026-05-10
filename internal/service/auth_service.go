@@ -56,7 +56,7 @@ func (s *AuthService) Login(ctx context.Context, email, password string) (*AuthR
 	if err != nil {
 		return nil, ErrInvalidCredentials
 	}
-	if !user.Active {
+	if user.Active != nil && !*user.Active {
 		return nil, ErrAccountDeactivated
 	}
 	if !user.CheckPassword(password) {
@@ -76,13 +76,14 @@ func (s *AuthService) Register(ctx context.Context, email, password, firstName, 
 		return nil, ErrDefaultRoleMissing
 	}
 
+	active := true
 	user := users.User{
 		Email:     email,
 		Password:  password,
 		FirstName: firstName,
 		LastName:  lastName,
 		RoleID:    defaultRole.ID,
-		Active:    true,
+		Active:    &active,
 	}
 	if err := s.auths.CreateUser(ctx, &user); err != nil {
 		return nil, fmt.Errorf("%w: %v", ErrCreateUser, err)

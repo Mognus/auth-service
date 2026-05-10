@@ -58,7 +58,7 @@ func (s *UserService) Create(ctx context.Context, input CreateUserInput) (*users
 		FirstName: input.FirstName,
 		LastName:  input.LastName,
 		RoleID:    input.RoleID,
-		Active:    input.Active,
+		Active:    &input.Active,
 	}, "Role")
 }
 
