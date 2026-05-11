@@ -37,58 +37,58 @@ service AuthService {
   // Users
   rpc ListUsers(ListUsersRequest) returns (ListUsersResponse) {
     option (google.api.http) = {
-      get: "/api/admin/auth/users"
+      get: "/api/admin/users"
     };
   }
   rpc GetUser(GetUserRequest) returns (GetUserResponse) {
     option (google.api.http) = {
-      get: "/api/admin/auth/users/{id}"
+      get: "/api/admin/users/{id}"
     };
   }
   rpc CreateUser(CreateUserRequest) returns (CreateUserResponse) {
     option (google.api.http) = {
-      post: "/api/admin/auth/users"
+      post: "/api/admin/users"
       body: "*"
     };
   }
   rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse) {
     option (google.api.http) = {
-      put: "/api/admin/auth/users/{id}"
+      put: "/api/admin/users/{id}"
       body: "*"
     };
   }
   rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse) {
     option (google.api.http) = {
-      delete: "/api/admin/auth/users/{id}"
+      delete: "/api/admin/users/{id}"
     };
   }
 
   // Roles
   rpc ListRoles(ListRolesRequest) returns (ListRolesResponse) {
     option (google.api.http) = {
-      get: "/api/admin/auth/roles"
+      get: "/api/admin/roles"
     };
   }
   rpc GetRole(GetRoleRequest) returns (GetRoleResponse) {
     option (google.api.http) = {
-      get: "/api/admin/auth/roles/{id}"
+      get: "/api/admin/roles/{id}"
     };
   }
   rpc CreateRole(CreateRoleRequest) returns (CreateRoleResponse) {
     option (google.api.http) = {
-      post: "/api/admin/auth/roles"
+      post: "/api/admin/roles"
       body: "*"
     };
   }
   rpc UpdateRole(UpdateRoleRequest) returns (UpdateRoleResponse) {
     option (google.api.http) = {
-      put: "/api/admin/auth/roles/{id}"
+      put: "/api/admin/roles/{id}"
       body: "*"
     };
   }
   rpc DeleteRole(DeleteRoleRequest) returns (DeleteRoleResponse) {
     option (google.api.http) = {
-      delete: "/api/admin/auth/roles/{id}"
+      delete: "/api/admin/roles/{id}"
     };
   }
 }
@@ -152,7 +152,7 @@ message ListUsersRequest {
 }
 
 message ListUsersResponse {
-  repeated UserResponse users = 1;
+  repeated UserResponse items = 1;
   int64                 total = 2;
 }
 
@@ -227,7 +227,7 @@ message ListRolesRequest {
 }
 
 message ListRolesResponse {
-  repeated RoleResponse roles = 1;
+  repeated RoleResponse items = 1;
   int64                 total = 2;
 }
 

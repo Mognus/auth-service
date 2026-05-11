@@ -34,9 +34,9 @@ func (h *Handler) ListRoles(ctx context.Context, req *authv1.ListRolesRequest) (
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	resp := &authv1.ListRolesResponse{Total: total, Roles: make([]*authv1.RoleResponse, len(result))}
+	resp := &authv1.ListRolesResponse{Total: total, Items: make([]*authv1.RoleResponse, len(result))}
 	for i, role := range result {
-		resp.Roles[i] = toRoleResponse(&role)
+		resp.Items[i] = toRoleResponse(&role)
 	}
 	return resp, nil
 }

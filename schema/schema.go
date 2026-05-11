@@ -19,7 +19,6 @@ type SelectOption struct {
 
 type Schema struct {
 	Name        string   `json:"name"`
-	APIPath     string   `json:"apiPath"`
 	DisplayName string   `json:"displayName"`
 	Fields      []Field  `json:"fields"`
 	Searchable  []string `json:"searchable"`
@@ -27,7 +26,6 @@ type Schema struct {
 
 var Users = Schema{
 	Name:        "users",
-	APIPath:     "auth/users",
 	DisplayName: "Users",
 	Fields: []Field{
 		{Name: "id", Type: "number", Label: "ID", Readonly: true, EditHidden: true, CreateHidden: true},
@@ -46,7 +44,6 @@ var Users = Schema{
 
 var Roles = Schema{
 	Name:        "roles",
-	APIPath:     "auth/roles",
 	DisplayName: "Roles",
 	Fields: []Field{
 		{Name: "id", Type: "number", Label: "ID", Readonly: true},

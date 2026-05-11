@@ -35,9 +35,9 @@ func (h *Handler) ListUsers(ctx context.Context, req *authv1.ListUsersRequest) (
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	resp := &authv1.ListUsersResponse{Total: total, Users: make([]*authv1.UserResponse, len(result))}
+	resp := &authv1.ListUsersResponse{Total: total, Items: make([]*authv1.UserResponse, len(result))}
 	for i, user := range result {
-		resp.Users[i] = toUserResponse(&user)
+		resp.Items[i] = toUserResponse(&user)
 	}
 	return resp, nil
 }

@@ -577,7 +577,7 @@ func (x *ListUsersRequest) GetSortOrder() string {
 
 type ListUsersResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Users         []*UserResponse        `protobuf:"bytes,1,rep,name=users,proto3" json:"users,omitempty"`
+	Items         []*UserResponse        `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
 	Total         int64                  `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -613,9 +613,9 @@ func (*ListUsersResponse) Descriptor() ([]byte, []int) {
 	return file_auth_v1_auth_proto_rawDescGZIP(), []int{10}
 }
 
-func (x *ListUsersResponse) GetUsers() []*UserResponse {
+func (x *ListUsersResponse) GetItems() []*UserResponse {
 	if x != nil {
-		return x.Users
+		return x.Items
 	}
 	return nil
 }
@@ -1261,7 +1261,7 @@ func (x *ListRolesRequest) GetSortOrder() string {
 
 type ListRolesResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Roles         []*RoleResponse        `protobuf:"bytes,1,rep,name=roles,proto3" json:"roles,omitempty"`
+	Items         []*RoleResponse        `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
 	Total         int64                  `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1297,9 +1297,9 @@ func (*ListRolesResponse) Descriptor() ([]byte, []int) {
 	return file_auth_v1_auth_proto_rawDescGZIP(), []int{21}
 }
 
-func (x *ListRolesResponse) GetRoles() []*RoleResponse {
+func (x *ListRolesResponse) GetItems() []*RoleResponse {
 	if x != nil {
-		return x.Roles
+		return x.Items
 	}
 	return nil
 }
@@ -1742,7 +1742,7 @@ const file_auth_v1_auth_proto_rawDesc = "" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"V\n" +
 	"\x11ListUsersResponse\x12+\n" +
-	"\x05users\x18\x01 \x03(\v2\x15.auth.v1.UserResponseR\x05users\x12\x14\n" +
+	"\x05items\x18\x01 \x03(\v2\x15.auth.v1.UserResponseR\x05items\x12\x14\n" +
 	"\x05total\x18\x02 \x01(\x03R\x05total\"\xe8\x01\n" +
 	"\x11CreateUserRequest\x12 \n" +
 	"\x05email\x18\x01 \x01(\tB\n" +
@@ -1801,7 +1801,7 @@ const file_auth_v1_auth_proto_rawDesc = "" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"V\n" +
 	"\x11ListRolesResponse\x12+\n" +
-	"\x05roles\x18\x01 \x03(\v2\x15.auth.v1.RoleResponseR\x05roles\x12\x14\n" +
+	"\x05items\x18\x01 \x03(\v2\x15.auth.v1.RoleResponseR\x05items\x12\x14\n" +
 	"\x05total\x18\x02 \x01(\x03R\x05total\"2\n" +
 	"\x11CreateRoleRequest\x12\x1d\n" +
 	"\x04name\x18\x01 \x01(\tB\t\xbaH\x06r\x04\x10\x01\x182R\x04name\"K\n" +
@@ -1824,28 +1824,29 @@ const file_auth_v1_auth_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\x03 \x01(\tR\tcreatedAt\x12\x1d\n" +
 	"\n" +
-	"updated_at\x18\x04 \x01(\tR\tupdatedAt2\x92\v\n" +
+	"updated_at\x18\x04 \x01(\tR\tupdatedAt2\xe0\n" +
+	"\n" +
 	"\vAuthService\x12R\n" +
 	"\x05Login\x12\x15.auth.v1.LoginRequest\x1a\x16.auth.v1.LoginResponse\"\x1a\x82\xd3\xe4\x93\x02\x14:\x01*\"\x0f/api/auth/login\x12^\n" +
 	"\bRegister\x12\x18.auth.v1.RegisterRequest\x1a\x19.auth.v1.RegisterResponse\"\x1d\x82\xd3\xe4\x93\x02\x17:\x01*\"\x12/api/auth/register\x12i\n" +
 	"\fRefreshToken\x12\x1c.auth.v1.RefreshTokenRequest\x1a\x1d.auth.v1.RefreshTokenResponse\"\x1c\x82\xd3\xe4\x93\x02\x16:\x01*\"\x11/api/auth/refresh\x12V\n" +
-	"\x06Logout\x12\x16.auth.v1.LogoutRequest\x1a\x17.auth.v1.LogoutResponse\"\x1b\x82\xd3\xe4\x93\x02\x15:\x01*\"\x10/api/auth/logout\x12a\n" +
-	"\tListUsers\x12\x19.auth.v1.ListUsersRequest\x1a\x1a.auth.v1.ListUsersResponse\"\x1d\x82\xd3\xe4\x93\x02\x17\x12\x15/api/admin/auth/users\x12`\n" +
-	"\aGetUser\x12\x17.auth.v1.GetUserRequest\x1a\x18.auth.v1.GetUserResponse\"\"\x82\xd3\xe4\x93\x02\x1c\x12\x1a/api/admin/auth/users/{id}\x12g\n" +
+	"\x06Logout\x12\x16.auth.v1.LogoutRequest\x1a\x17.auth.v1.LogoutResponse\"\x1b\x82\xd3\xe4\x93\x02\x15:\x01*\"\x10/api/auth/logout\x12\\\n" +
+	"\tListUsers\x12\x19.auth.v1.ListUsersRequest\x1a\x1a.auth.v1.ListUsersResponse\"\x18\x82\xd3\xe4\x93\x02\x12\x12\x10/api/admin/users\x12[\n" +
+	"\aGetUser\x12\x17.auth.v1.GetUserRequest\x1a\x18.auth.v1.GetUserResponse\"\x1d\x82\xd3\xe4\x93\x02\x17\x12\x15/api/admin/users/{id}\x12b\n" +
 	"\n" +
-	"CreateUser\x12\x1a.auth.v1.CreateUserRequest\x1a\x1b.auth.v1.CreateUserResponse\" \x82\xd3\xe4\x93\x02\x1a:\x01*\"\x15/api/admin/auth/users\x12l\n" +
+	"CreateUser\x12\x1a.auth.v1.CreateUserRequest\x1a\x1b.auth.v1.CreateUserResponse\"\x1b\x82\xd3\xe4\x93\x02\x15:\x01*\"\x10/api/admin/users\x12g\n" +
 	"\n" +
-	"UpdateUser\x12\x1a.auth.v1.UpdateUserRequest\x1a\x1b.auth.v1.UpdateUserResponse\"%\x82\xd3\xe4\x93\x02\x1f:\x01*\x1a\x1a/api/admin/auth/users/{id}\x12i\n" +
+	"UpdateUser\x12\x1a.auth.v1.UpdateUserRequest\x1a\x1b.auth.v1.UpdateUserResponse\" \x82\xd3\xe4\x93\x02\x1a:\x01*\x1a\x15/api/admin/users/{id}\x12d\n" +
 	"\n" +
-	"DeleteUser\x12\x1a.auth.v1.DeleteUserRequest\x1a\x1b.auth.v1.DeleteUserResponse\"\"\x82\xd3\xe4\x93\x02\x1c*\x1a/api/admin/auth/users/{id}\x12a\n" +
-	"\tListRoles\x12\x19.auth.v1.ListRolesRequest\x1a\x1a.auth.v1.ListRolesResponse\"\x1d\x82\xd3\xe4\x93\x02\x17\x12\x15/api/admin/auth/roles\x12`\n" +
-	"\aGetRole\x12\x17.auth.v1.GetRoleRequest\x1a\x18.auth.v1.GetRoleResponse\"\"\x82\xd3\xe4\x93\x02\x1c\x12\x1a/api/admin/auth/roles/{id}\x12g\n" +
+	"DeleteUser\x12\x1a.auth.v1.DeleteUserRequest\x1a\x1b.auth.v1.DeleteUserResponse\"\x1d\x82\xd3\xe4\x93\x02\x17*\x15/api/admin/users/{id}\x12\\\n" +
+	"\tListRoles\x12\x19.auth.v1.ListRolesRequest\x1a\x1a.auth.v1.ListRolesResponse\"\x18\x82\xd3\xe4\x93\x02\x12\x12\x10/api/admin/roles\x12[\n" +
+	"\aGetRole\x12\x17.auth.v1.GetRoleRequest\x1a\x18.auth.v1.GetRoleResponse\"\x1d\x82\xd3\xe4\x93\x02\x17\x12\x15/api/admin/roles/{id}\x12b\n" +
 	"\n" +
-	"CreateRole\x12\x1a.auth.v1.CreateRoleRequest\x1a\x1b.auth.v1.CreateRoleResponse\" \x82\xd3\xe4\x93\x02\x1a:\x01*\"\x15/api/admin/auth/roles\x12l\n" +
+	"CreateRole\x12\x1a.auth.v1.CreateRoleRequest\x1a\x1b.auth.v1.CreateRoleResponse\"\x1b\x82\xd3\xe4\x93\x02\x15:\x01*\"\x10/api/admin/roles\x12g\n" +
 	"\n" +
-	"UpdateRole\x12\x1a.auth.v1.UpdateRoleRequest\x1a\x1b.auth.v1.UpdateRoleResponse\"%\x82\xd3\xe4\x93\x02\x1f:\x01*\x1a\x1a/api/admin/auth/roles/{id}\x12i\n" +
+	"UpdateRole\x12\x1a.auth.v1.UpdateRoleRequest\x1a\x1b.auth.v1.UpdateRoleResponse\" \x82\xd3\xe4\x93\x02\x1a:\x01*\x1a\x15/api/admin/roles/{id}\x12d\n" +
 	"\n" +
-	"DeleteRole\x12\x1a.auth.v1.DeleteRoleRequest\x1a\x1b.auth.v1.DeleteRoleResponse\"\"\x82\xd3\xe4\x93\x02\x1c*\x1a/api/admin/auth/roles/{id}B!Z\x1fauth-service/gen/auth/v1;authv1b\x06proto3"
+	"DeleteRole\x12\x1a.auth.v1.DeleteRoleRequest\x1a\x1b.auth.v1.DeleteRoleResponse\"\x1d\x82\xd3\xe4\x93\x02\x17*\x15/api/admin/roles/{id}B!Z\x1fauth-service/gen/auth/v1;authv1b\x06proto3"
 
 var (
 	file_auth_v1_auth_proto_rawDescOnce sync.Once
@@ -1898,13 +1899,13 @@ var file_auth_v1_auth_proto_depIdxs = []int32{
 	18, // 0: auth.v1.LoginResponse.user:type_name -> auth.v1.UserResponse
 	18, // 1: auth.v1.RegisterResponse.user:type_name -> auth.v1.UserResponse
 	30, // 2: auth.v1.ListUsersRequest.filters:type_name -> auth.v1.ListUsersRequest.FiltersEntry
-	18, // 3: auth.v1.ListUsersResponse.users:type_name -> auth.v1.UserResponse
+	18, // 3: auth.v1.ListUsersResponse.items:type_name -> auth.v1.UserResponse
 	18, // 4: auth.v1.GetUserResponse.user:type_name -> auth.v1.UserResponse
 	18, // 5: auth.v1.CreateUserResponse.user:type_name -> auth.v1.UserResponse
 	18, // 6: auth.v1.UpdateUserResponse.user:type_name -> auth.v1.UserResponse
 	29, // 7: auth.v1.UserResponse.role:type_name -> auth.v1.RoleResponse
 	31, // 8: auth.v1.ListRolesRequest.filters:type_name -> auth.v1.ListRolesRequest.FiltersEntry
-	29, // 9: auth.v1.ListRolesResponse.roles:type_name -> auth.v1.RoleResponse
+	29, // 9: auth.v1.ListRolesResponse.items:type_name -> auth.v1.RoleResponse
 	29, // 10: auth.v1.GetRoleResponse.role:type_name -> auth.v1.RoleResponse
 	29, // 11: auth.v1.CreateRoleResponse.role:type_name -> auth.v1.RoleResponse
 	29, // 12: auth.v1.UpdateRoleResponse.role:type_name -> auth.v1.RoleResponse
