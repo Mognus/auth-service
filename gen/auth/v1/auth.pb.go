@@ -1695,6 +1695,376 @@ func (x *RoleResponse) GetUpdatedAt() string {
 	return ""
 }
 
+type SchemaSelectOption struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Value         string                 `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty"`
+	Label         string                 `protobuf:"bytes,2,opt,name=label,proto3" json:"label,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SchemaSelectOption) Reset() {
+	*x = SchemaSelectOption{}
+	mi := &file_auth_v1_auth_proto_msgTypes[30]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SchemaSelectOption) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SchemaSelectOption) ProtoMessage() {}
+
+func (x *SchemaSelectOption) ProtoReflect() protoreflect.Message {
+	mi := &file_auth_v1_auth_proto_msgTypes[30]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SchemaSelectOption.ProtoReflect.Descriptor instead.
+func (*SchemaSelectOption) Descriptor() ([]byte, []int) {
+	return file_auth_v1_auth_proto_rawDescGZIP(), []int{30}
+}
+
+func (x *SchemaSelectOption) GetValue() string {
+	if x != nil {
+		return x.Value
+	}
+	return ""
+}
+
+func (x *SchemaSelectOption) GetLabel() string {
+	if x != nil {
+		return x.Label
+	}
+	return ""
+}
+
+type SchemaField struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Type          string                 `protobuf:"bytes,2,opt,name=type,proto3" json:"type,omitempty"`
+	Label         string                 `protobuf:"bytes,3,opt,name=label,proto3" json:"label,omitempty"`
+	Required      bool                   `protobuf:"varint,4,opt,name=required,proto3" json:"required,omitempty"`
+	Readonly      bool                   `protobuf:"varint,5,opt,name=readonly,proto3" json:"readonly,omitempty"`
+	TableHidden   bool                   `protobuf:"varint,6,opt,name=table_hidden,json=tableHidden,proto3" json:"table_hidden,omitempty"`
+	EditHidden    bool                   `protobuf:"varint,7,opt,name=edit_hidden,json=editHidden,proto3" json:"edit_hidden,omitempty"`
+	CreateHidden  bool                   `protobuf:"varint,8,opt,name=create_hidden,json=createHidden,proto3" json:"create_hidden,omitempty"`
+	Options       []*SchemaSelectOption  `protobuf:"bytes,9,rep,name=options,proto3" json:"options,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SchemaField) Reset() {
+	*x = SchemaField{}
+	mi := &file_auth_v1_auth_proto_msgTypes[31]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SchemaField) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SchemaField) ProtoMessage() {}
+
+func (x *SchemaField) ProtoReflect() protoreflect.Message {
+	mi := &file_auth_v1_auth_proto_msgTypes[31]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SchemaField.ProtoReflect.Descriptor instead.
+func (*SchemaField) Descriptor() ([]byte, []int) {
+	return file_auth_v1_auth_proto_rawDescGZIP(), []int{31}
+}
+
+func (x *SchemaField) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *SchemaField) GetType() string {
+	if x != nil {
+		return x.Type
+	}
+	return ""
+}
+
+func (x *SchemaField) GetLabel() string {
+	if x != nil {
+		return x.Label
+	}
+	return ""
+}
+
+func (x *SchemaField) GetRequired() bool {
+	if x != nil {
+		return x.Required
+	}
+	return false
+}
+
+func (x *SchemaField) GetReadonly() bool {
+	if x != nil {
+		return x.Readonly
+	}
+	return false
+}
+
+func (x *SchemaField) GetTableHidden() bool {
+	if x != nil {
+		return x.TableHidden
+	}
+	return false
+}
+
+func (x *SchemaField) GetEditHidden() bool {
+	if x != nil {
+		return x.EditHidden
+	}
+	return false
+}
+
+func (x *SchemaField) GetCreateHidden() bool {
+	if x != nil {
+		return x.CreateHidden
+	}
+	return false
+}
+
+func (x *SchemaField) GetOptions() []*SchemaSelectOption {
+	if x != nil {
+		return x.Options
+	}
+	return nil
+}
+
+type GetUsersSchemaRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetUsersSchemaRequest) Reset() {
+	*x = GetUsersSchemaRequest{}
+	mi := &file_auth_v1_auth_proto_msgTypes[32]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetUsersSchemaRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetUsersSchemaRequest) ProtoMessage() {}
+
+func (x *GetUsersSchemaRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_auth_v1_auth_proto_msgTypes[32]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetUsersSchemaRequest.ProtoReflect.Descriptor instead.
+func (*GetUsersSchemaRequest) Descriptor() ([]byte, []int) {
+	return file_auth_v1_auth_proto_rawDescGZIP(), []int{32}
+}
+
+// Response fields map directly to AdminSchema in the frontend.
+type GetUsersSchemaResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	DisplayName   string                 `protobuf:"bytes,2,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
+	Fields        []*SchemaField         `protobuf:"bytes,3,rep,name=fields,proto3" json:"fields,omitempty"`
+	Searchable    []string               `protobuf:"bytes,4,rep,name=searchable,proto3" json:"searchable,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetUsersSchemaResponse) Reset() {
+	*x = GetUsersSchemaResponse{}
+	mi := &file_auth_v1_auth_proto_msgTypes[33]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetUsersSchemaResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetUsersSchemaResponse) ProtoMessage() {}
+
+func (x *GetUsersSchemaResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_auth_v1_auth_proto_msgTypes[33]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetUsersSchemaResponse.ProtoReflect.Descriptor instead.
+func (*GetUsersSchemaResponse) Descriptor() ([]byte, []int) {
+	return file_auth_v1_auth_proto_rawDescGZIP(), []int{33}
+}
+
+func (x *GetUsersSchemaResponse) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *GetUsersSchemaResponse) GetDisplayName() string {
+	if x != nil {
+		return x.DisplayName
+	}
+	return ""
+}
+
+func (x *GetUsersSchemaResponse) GetFields() []*SchemaField {
+	if x != nil {
+		return x.Fields
+	}
+	return nil
+}
+
+func (x *GetUsersSchemaResponse) GetSearchable() []string {
+	if x != nil {
+		return x.Searchable
+	}
+	return nil
+}
+
+type GetRolesSchemaRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetRolesSchemaRequest) Reset() {
+	*x = GetRolesSchemaRequest{}
+	mi := &file_auth_v1_auth_proto_msgTypes[34]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetRolesSchemaRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetRolesSchemaRequest) ProtoMessage() {}
+
+func (x *GetRolesSchemaRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_auth_v1_auth_proto_msgTypes[34]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetRolesSchemaRequest.ProtoReflect.Descriptor instead.
+func (*GetRolesSchemaRequest) Descriptor() ([]byte, []int) {
+	return file_auth_v1_auth_proto_rawDescGZIP(), []int{34}
+}
+
+// Response fields map directly to AdminSchema in the frontend.
+type GetRolesSchemaResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	DisplayName   string                 `protobuf:"bytes,2,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
+	Fields        []*SchemaField         `protobuf:"bytes,3,rep,name=fields,proto3" json:"fields,omitempty"`
+	Searchable    []string               `protobuf:"bytes,4,rep,name=searchable,proto3" json:"searchable,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetRolesSchemaResponse) Reset() {
+	*x = GetRolesSchemaResponse{}
+	mi := &file_auth_v1_auth_proto_msgTypes[35]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetRolesSchemaResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetRolesSchemaResponse) ProtoMessage() {}
+
+func (x *GetRolesSchemaResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_auth_v1_auth_proto_msgTypes[35]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetRolesSchemaResponse.ProtoReflect.Descriptor instead.
+func (*GetRolesSchemaResponse) Descriptor() ([]byte, []int) {
+	return file_auth_v1_auth_proto_rawDescGZIP(), []int{35}
+}
+
+func (x *GetRolesSchemaResponse) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *GetRolesSchemaResponse) GetDisplayName() string {
+	if x != nil {
+		return x.DisplayName
+	}
+	return ""
+}
+
+func (x *GetRolesSchemaResponse) GetFields() []*SchemaField {
+	if x != nil {
+		return x.Fields
+	}
+	return nil
+}
+
+func (x *GetRolesSchemaResponse) GetSearchable() []string {
+	if x != nil {
+		return x.Searchable
+	}
+	return nil
+}
+
 var File_auth_v1_auth_proto protoreflect.FileDescriptor
 
 const file_auth_v1_auth_proto_rawDesc = "" +
@@ -1824,8 +2194,37 @@ const file_auth_v1_auth_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\x03 \x01(\tR\tcreatedAt\x12\x1d\n" +
 	"\n" +
-	"updated_at\x18\x04 \x01(\tR\tupdatedAt2\xe0\n" +
+	"updated_at\x18\x04 \x01(\tR\tupdatedAt\"@\n" +
+	"\x12SchemaSelectOption\x12\x14\n" +
+	"\x05value\x18\x01 \x01(\tR\x05value\x12\x14\n" +
+	"\x05label\x18\x02 \x01(\tR\x05label\"\xa3\x02\n" +
+	"\vSchemaField\x12\x12\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12\x12\n" +
+	"\x04type\x18\x02 \x01(\tR\x04type\x12\x14\n" +
+	"\x05label\x18\x03 \x01(\tR\x05label\x12\x1a\n" +
+	"\brequired\x18\x04 \x01(\bR\brequired\x12\x1a\n" +
+	"\breadonly\x18\x05 \x01(\bR\breadonly\x12!\n" +
+	"\ftable_hidden\x18\x06 \x01(\bR\vtableHidden\x12\x1f\n" +
+	"\vedit_hidden\x18\a \x01(\bR\n" +
+	"editHidden\x12#\n" +
+	"\rcreate_hidden\x18\b \x01(\bR\fcreateHidden\x125\n" +
+	"\aoptions\x18\t \x03(\v2\x1b.auth.v1.SchemaSelectOptionR\aoptions\"\x17\n" +
+	"\x15GetUsersSchemaRequest\"\x9d\x01\n" +
+	"\x16GetUsersSchemaResponse\x12\x12\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12!\n" +
+	"\fdisplay_name\x18\x02 \x01(\tR\vdisplayName\x12,\n" +
+	"\x06fields\x18\x03 \x03(\v2\x14.auth.v1.SchemaFieldR\x06fields\x12\x1e\n" +
 	"\n" +
+	"searchable\x18\x04 \x03(\tR\n" +
+	"searchable\"\x17\n" +
+	"\x15GetRolesSchemaRequest\"\x9d\x01\n" +
+	"\x16GetRolesSchemaResponse\x12\x12\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12!\n" +
+	"\fdisplay_name\x18\x02 \x01(\tR\vdisplayName\x12,\n" +
+	"\x06fields\x18\x03 \x03(\v2\x14.auth.v1.SchemaFieldR\x06fields\x12\x1e\n" +
+	"\n" +
+	"searchable\x18\x04 \x03(\tR\n" +
+	"searchable2\xc8\f\n" +
 	"\vAuthService\x12R\n" +
 	"\x05Login\x12\x15.auth.v1.LoginRequest\x1a\x16.auth.v1.LoginResponse\"\x1a\x82\xd3\xe4\x93\x02\x14:\x01*\"\x0f/api/auth/login\x12^\n" +
 	"\bRegister\x12\x18.auth.v1.RegisterRequest\x1a\x19.auth.v1.RegisterResponse\"\x1d\x82\xd3\xe4\x93\x02\x17:\x01*\"\x12/api/auth/register\x12i\n" +
@@ -1846,7 +2245,9 @@ const file_auth_v1_auth_proto_rawDesc = "" +
 	"\n" +
 	"UpdateRole\x12\x1a.auth.v1.UpdateRoleRequest\x1a\x1b.auth.v1.UpdateRoleResponse\" \x82\xd3\xe4\x93\x02\x1a:\x01*\x1a\x15/api/admin/roles/{id}\x12d\n" +
 	"\n" +
-	"DeleteRole\x12\x1a.auth.v1.DeleteRoleRequest\x1a\x1b.auth.v1.DeleteRoleResponse\"\x1d\x82\xd3\xe4\x93\x02\x17*\x15/api/admin/roles/{id}B!Z\x1fauth-service/gen/auth/v1;authv1b\x06proto3"
+	"DeleteRole\x12\x1a.auth.v1.DeleteRoleRequest\x1a\x1b.auth.v1.DeleteRoleResponse\"\x1d\x82\xd3\xe4\x93\x02\x17*\x15/api/admin/roles/{id}\x12r\n" +
+	"\x0eGetUsersSchema\x12\x1e.auth.v1.GetUsersSchemaRequest\x1a\x1f.auth.v1.GetUsersSchemaResponse\"\x1f\x82\xd3\xe4\x93\x02\x19\x12\x17/api/admin/users/schema\x12r\n" +
+	"\x0eGetRolesSchema\x12\x1e.auth.v1.GetRolesSchemaRequest\x1a\x1f.auth.v1.GetRolesSchemaResponse\"\x1f\x82\xd3\xe4\x93\x02\x19\x12\x17/api/admin/roles/schemaB!Z\x1fauth-service/gen/auth/v1;authv1b\x06proto3"
 
 var (
 	file_auth_v1_auth_proto_rawDescOnce sync.Once
@@ -1860,88 +2261,101 @@ func file_auth_v1_auth_proto_rawDescGZIP() []byte {
 	return file_auth_v1_auth_proto_rawDescData
 }
 
-var file_auth_v1_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 32)
+var file_auth_v1_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 38)
 var file_auth_v1_auth_proto_goTypes = []any{
-	(*LoginRequest)(nil),         // 0: auth.v1.LoginRequest
-	(*LoginResponse)(nil),        // 1: auth.v1.LoginResponse
-	(*RegisterRequest)(nil),      // 2: auth.v1.RegisterRequest
-	(*RegisterResponse)(nil),     // 3: auth.v1.RegisterResponse
-	(*RefreshTokenRequest)(nil),  // 4: auth.v1.RefreshTokenRequest
-	(*RefreshTokenResponse)(nil), // 5: auth.v1.RefreshTokenResponse
-	(*LogoutRequest)(nil),        // 6: auth.v1.LogoutRequest
-	(*LogoutResponse)(nil),       // 7: auth.v1.LogoutResponse
-	(*GetUserRequest)(nil),       // 8: auth.v1.GetUserRequest
-	(*ListUsersRequest)(nil),     // 9: auth.v1.ListUsersRequest
-	(*ListUsersResponse)(nil),    // 10: auth.v1.ListUsersResponse
-	(*CreateUserRequest)(nil),    // 11: auth.v1.CreateUserRequest
-	(*UpdateUserRequest)(nil),    // 12: auth.v1.UpdateUserRequest
-	(*DeleteUserRequest)(nil),    // 13: auth.v1.DeleteUserRequest
-	(*GetUserResponse)(nil),      // 14: auth.v1.GetUserResponse
-	(*CreateUserResponse)(nil),   // 15: auth.v1.CreateUserResponse
-	(*UpdateUserResponse)(nil),   // 16: auth.v1.UpdateUserResponse
-	(*DeleteUserResponse)(nil),   // 17: auth.v1.DeleteUserResponse
-	(*UserResponse)(nil),         // 18: auth.v1.UserResponse
-	(*GetRoleRequest)(nil),       // 19: auth.v1.GetRoleRequest
-	(*ListRolesRequest)(nil),     // 20: auth.v1.ListRolesRequest
-	(*ListRolesResponse)(nil),    // 21: auth.v1.ListRolesResponse
-	(*CreateRoleRequest)(nil),    // 22: auth.v1.CreateRoleRequest
-	(*UpdateRoleRequest)(nil),    // 23: auth.v1.UpdateRoleRequest
-	(*DeleteRoleRequest)(nil),    // 24: auth.v1.DeleteRoleRequest
-	(*GetRoleResponse)(nil),      // 25: auth.v1.GetRoleResponse
-	(*CreateRoleResponse)(nil),   // 26: auth.v1.CreateRoleResponse
-	(*UpdateRoleResponse)(nil),   // 27: auth.v1.UpdateRoleResponse
-	(*DeleteRoleResponse)(nil),   // 28: auth.v1.DeleteRoleResponse
-	(*RoleResponse)(nil),         // 29: auth.v1.RoleResponse
-	nil,                          // 30: auth.v1.ListUsersRequest.FiltersEntry
-	nil,                          // 31: auth.v1.ListRolesRequest.FiltersEntry
+	(*LoginRequest)(nil),           // 0: auth.v1.LoginRequest
+	(*LoginResponse)(nil),          // 1: auth.v1.LoginResponse
+	(*RegisterRequest)(nil),        // 2: auth.v1.RegisterRequest
+	(*RegisterResponse)(nil),       // 3: auth.v1.RegisterResponse
+	(*RefreshTokenRequest)(nil),    // 4: auth.v1.RefreshTokenRequest
+	(*RefreshTokenResponse)(nil),   // 5: auth.v1.RefreshTokenResponse
+	(*LogoutRequest)(nil),          // 6: auth.v1.LogoutRequest
+	(*LogoutResponse)(nil),         // 7: auth.v1.LogoutResponse
+	(*GetUserRequest)(nil),         // 8: auth.v1.GetUserRequest
+	(*ListUsersRequest)(nil),       // 9: auth.v1.ListUsersRequest
+	(*ListUsersResponse)(nil),      // 10: auth.v1.ListUsersResponse
+	(*CreateUserRequest)(nil),      // 11: auth.v1.CreateUserRequest
+	(*UpdateUserRequest)(nil),      // 12: auth.v1.UpdateUserRequest
+	(*DeleteUserRequest)(nil),      // 13: auth.v1.DeleteUserRequest
+	(*GetUserResponse)(nil),        // 14: auth.v1.GetUserResponse
+	(*CreateUserResponse)(nil),     // 15: auth.v1.CreateUserResponse
+	(*UpdateUserResponse)(nil),     // 16: auth.v1.UpdateUserResponse
+	(*DeleteUserResponse)(nil),     // 17: auth.v1.DeleteUserResponse
+	(*UserResponse)(nil),           // 18: auth.v1.UserResponse
+	(*GetRoleRequest)(nil),         // 19: auth.v1.GetRoleRequest
+	(*ListRolesRequest)(nil),       // 20: auth.v1.ListRolesRequest
+	(*ListRolesResponse)(nil),      // 21: auth.v1.ListRolesResponse
+	(*CreateRoleRequest)(nil),      // 22: auth.v1.CreateRoleRequest
+	(*UpdateRoleRequest)(nil),      // 23: auth.v1.UpdateRoleRequest
+	(*DeleteRoleRequest)(nil),      // 24: auth.v1.DeleteRoleRequest
+	(*GetRoleResponse)(nil),        // 25: auth.v1.GetRoleResponse
+	(*CreateRoleResponse)(nil),     // 26: auth.v1.CreateRoleResponse
+	(*UpdateRoleResponse)(nil),     // 27: auth.v1.UpdateRoleResponse
+	(*DeleteRoleResponse)(nil),     // 28: auth.v1.DeleteRoleResponse
+	(*RoleResponse)(nil),           // 29: auth.v1.RoleResponse
+	(*SchemaSelectOption)(nil),     // 30: auth.v1.SchemaSelectOption
+	(*SchemaField)(nil),            // 31: auth.v1.SchemaField
+	(*GetUsersSchemaRequest)(nil),  // 32: auth.v1.GetUsersSchemaRequest
+	(*GetUsersSchemaResponse)(nil), // 33: auth.v1.GetUsersSchemaResponse
+	(*GetRolesSchemaRequest)(nil),  // 34: auth.v1.GetRolesSchemaRequest
+	(*GetRolesSchemaResponse)(nil), // 35: auth.v1.GetRolesSchemaResponse
+	nil,                            // 36: auth.v1.ListUsersRequest.FiltersEntry
+	nil,                            // 37: auth.v1.ListRolesRequest.FiltersEntry
 }
 var file_auth_v1_auth_proto_depIdxs = []int32{
 	18, // 0: auth.v1.LoginResponse.user:type_name -> auth.v1.UserResponse
 	18, // 1: auth.v1.RegisterResponse.user:type_name -> auth.v1.UserResponse
-	30, // 2: auth.v1.ListUsersRequest.filters:type_name -> auth.v1.ListUsersRequest.FiltersEntry
+	36, // 2: auth.v1.ListUsersRequest.filters:type_name -> auth.v1.ListUsersRequest.FiltersEntry
 	18, // 3: auth.v1.ListUsersResponse.items:type_name -> auth.v1.UserResponse
 	18, // 4: auth.v1.GetUserResponse.user:type_name -> auth.v1.UserResponse
 	18, // 5: auth.v1.CreateUserResponse.user:type_name -> auth.v1.UserResponse
 	18, // 6: auth.v1.UpdateUserResponse.user:type_name -> auth.v1.UserResponse
 	29, // 7: auth.v1.UserResponse.role:type_name -> auth.v1.RoleResponse
-	31, // 8: auth.v1.ListRolesRequest.filters:type_name -> auth.v1.ListRolesRequest.FiltersEntry
+	37, // 8: auth.v1.ListRolesRequest.filters:type_name -> auth.v1.ListRolesRequest.FiltersEntry
 	29, // 9: auth.v1.ListRolesResponse.items:type_name -> auth.v1.RoleResponse
 	29, // 10: auth.v1.GetRoleResponse.role:type_name -> auth.v1.RoleResponse
 	29, // 11: auth.v1.CreateRoleResponse.role:type_name -> auth.v1.RoleResponse
 	29, // 12: auth.v1.UpdateRoleResponse.role:type_name -> auth.v1.RoleResponse
-	0,  // 13: auth.v1.AuthService.Login:input_type -> auth.v1.LoginRequest
-	2,  // 14: auth.v1.AuthService.Register:input_type -> auth.v1.RegisterRequest
-	4,  // 15: auth.v1.AuthService.RefreshToken:input_type -> auth.v1.RefreshTokenRequest
-	6,  // 16: auth.v1.AuthService.Logout:input_type -> auth.v1.LogoutRequest
-	9,  // 17: auth.v1.AuthService.ListUsers:input_type -> auth.v1.ListUsersRequest
-	8,  // 18: auth.v1.AuthService.GetUser:input_type -> auth.v1.GetUserRequest
-	11, // 19: auth.v1.AuthService.CreateUser:input_type -> auth.v1.CreateUserRequest
-	12, // 20: auth.v1.AuthService.UpdateUser:input_type -> auth.v1.UpdateUserRequest
-	13, // 21: auth.v1.AuthService.DeleteUser:input_type -> auth.v1.DeleteUserRequest
-	20, // 22: auth.v1.AuthService.ListRoles:input_type -> auth.v1.ListRolesRequest
-	19, // 23: auth.v1.AuthService.GetRole:input_type -> auth.v1.GetRoleRequest
-	22, // 24: auth.v1.AuthService.CreateRole:input_type -> auth.v1.CreateRoleRequest
-	23, // 25: auth.v1.AuthService.UpdateRole:input_type -> auth.v1.UpdateRoleRequest
-	24, // 26: auth.v1.AuthService.DeleteRole:input_type -> auth.v1.DeleteRoleRequest
-	1,  // 27: auth.v1.AuthService.Login:output_type -> auth.v1.LoginResponse
-	3,  // 28: auth.v1.AuthService.Register:output_type -> auth.v1.RegisterResponse
-	5,  // 29: auth.v1.AuthService.RefreshToken:output_type -> auth.v1.RefreshTokenResponse
-	7,  // 30: auth.v1.AuthService.Logout:output_type -> auth.v1.LogoutResponse
-	10, // 31: auth.v1.AuthService.ListUsers:output_type -> auth.v1.ListUsersResponse
-	14, // 32: auth.v1.AuthService.GetUser:output_type -> auth.v1.GetUserResponse
-	15, // 33: auth.v1.AuthService.CreateUser:output_type -> auth.v1.CreateUserResponse
-	16, // 34: auth.v1.AuthService.UpdateUser:output_type -> auth.v1.UpdateUserResponse
-	17, // 35: auth.v1.AuthService.DeleteUser:output_type -> auth.v1.DeleteUserResponse
-	21, // 36: auth.v1.AuthService.ListRoles:output_type -> auth.v1.ListRolesResponse
-	25, // 37: auth.v1.AuthService.GetRole:output_type -> auth.v1.GetRoleResponse
-	26, // 38: auth.v1.AuthService.CreateRole:output_type -> auth.v1.CreateRoleResponse
-	27, // 39: auth.v1.AuthService.UpdateRole:output_type -> auth.v1.UpdateRoleResponse
-	28, // 40: auth.v1.AuthService.DeleteRole:output_type -> auth.v1.DeleteRoleResponse
-	27, // [27:41] is the sub-list for method output_type
-	13, // [13:27] is the sub-list for method input_type
-	13, // [13:13] is the sub-list for extension type_name
-	13, // [13:13] is the sub-list for extension extendee
-	0,  // [0:13] is the sub-list for field type_name
+	30, // 13: auth.v1.SchemaField.options:type_name -> auth.v1.SchemaSelectOption
+	31, // 14: auth.v1.GetUsersSchemaResponse.fields:type_name -> auth.v1.SchemaField
+	31, // 15: auth.v1.GetRolesSchemaResponse.fields:type_name -> auth.v1.SchemaField
+	0,  // 16: auth.v1.AuthService.Login:input_type -> auth.v1.LoginRequest
+	2,  // 17: auth.v1.AuthService.Register:input_type -> auth.v1.RegisterRequest
+	4,  // 18: auth.v1.AuthService.RefreshToken:input_type -> auth.v1.RefreshTokenRequest
+	6,  // 19: auth.v1.AuthService.Logout:input_type -> auth.v1.LogoutRequest
+	9,  // 20: auth.v1.AuthService.ListUsers:input_type -> auth.v1.ListUsersRequest
+	8,  // 21: auth.v1.AuthService.GetUser:input_type -> auth.v1.GetUserRequest
+	11, // 22: auth.v1.AuthService.CreateUser:input_type -> auth.v1.CreateUserRequest
+	12, // 23: auth.v1.AuthService.UpdateUser:input_type -> auth.v1.UpdateUserRequest
+	13, // 24: auth.v1.AuthService.DeleteUser:input_type -> auth.v1.DeleteUserRequest
+	20, // 25: auth.v1.AuthService.ListRoles:input_type -> auth.v1.ListRolesRequest
+	19, // 26: auth.v1.AuthService.GetRole:input_type -> auth.v1.GetRoleRequest
+	22, // 27: auth.v1.AuthService.CreateRole:input_type -> auth.v1.CreateRoleRequest
+	23, // 28: auth.v1.AuthService.UpdateRole:input_type -> auth.v1.UpdateRoleRequest
+	24, // 29: auth.v1.AuthService.DeleteRole:input_type -> auth.v1.DeleteRoleRequest
+	32, // 30: auth.v1.AuthService.GetUsersSchema:input_type -> auth.v1.GetUsersSchemaRequest
+	34, // 31: auth.v1.AuthService.GetRolesSchema:input_type -> auth.v1.GetRolesSchemaRequest
+	1,  // 32: auth.v1.AuthService.Login:output_type -> auth.v1.LoginResponse
+	3,  // 33: auth.v1.AuthService.Register:output_type -> auth.v1.RegisterResponse
+	5,  // 34: auth.v1.AuthService.RefreshToken:output_type -> auth.v1.RefreshTokenResponse
+	7,  // 35: auth.v1.AuthService.Logout:output_type -> auth.v1.LogoutResponse
+	10, // 36: auth.v1.AuthService.ListUsers:output_type -> auth.v1.ListUsersResponse
+	14, // 37: auth.v1.AuthService.GetUser:output_type -> auth.v1.GetUserResponse
+	15, // 38: auth.v1.AuthService.CreateUser:output_type -> auth.v1.CreateUserResponse
+	16, // 39: auth.v1.AuthService.UpdateUser:output_type -> auth.v1.UpdateUserResponse
+	17, // 40: auth.v1.AuthService.DeleteUser:output_type -> auth.v1.DeleteUserResponse
+	21, // 41: auth.v1.AuthService.ListRoles:output_type -> auth.v1.ListRolesResponse
+	25, // 42: auth.v1.AuthService.GetRole:output_type -> auth.v1.GetRoleResponse
+	26, // 43: auth.v1.AuthService.CreateRole:output_type -> auth.v1.CreateRoleResponse
+	27, // 44: auth.v1.AuthService.UpdateRole:output_type -> auth.v1.UpdateRoleResponse
+	28, // 45: auth.v1.AuthService.DeleteRole:output_type -> auth.v1.DeleteRoleResponse
+	33, // 46: auth.v1.AuthService.GetUsersSchema:output_type -> auth.v1.GetUsersSchemaResponse
+	35, // 47: auth.v1.AuthService.GetRolesSchema:output_type -> auth.v1.GetRolesSchemaResponse
+	32, // [32:48] is the sub-list for method output_type
+	16, // [16:32] is the sub-list for method input_type
+	16, // [16:16] is the sub-list for extension type_name
+	16, // [16:16] is the sub-list for extension extendee
+	0,  // [0:16] is the sub-list for field type_name
 }
 
 func init() { file_auth_v1_auth_proto_init() }
@@ -1955,7 +2369,7 @@ func file_auth_v1_auth_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_auth_v1_auth_proto_rawDesc), len(file_auth_v1_auth_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   32,
+			NumMessages:   38,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

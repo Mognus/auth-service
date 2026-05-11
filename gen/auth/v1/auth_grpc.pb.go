@@ -19,20 +19,22 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	AuthService_Login_FullMethodName        = "/auth.v1.AuthService/Login"
-	AuthService_Register_FullMethodName     = "/auth.v1.AuthService/Register"
-	AuthService_RefreshToken_FullMethodName = "/auth.v1.AuthService/RefreshToken"
-	AuthService_Logout_FullMethodName       = "/auth.v1.AuthService/Logout"
-	AuthService_ListUsers_FullMethodName    = "/auth.v1.AuthService/ListUsers"
-	AuthService_GetUser_FullMethodName      = "/auth.v1.AuthService/GetUser"
-	AuthService_CreateUser_FullMethodName   = "/auth.v1.AuthService/CreateUser"
-	AuthService_UpdateUser_FullMethodName   = "/auth.v1.AuthService/UpdateUser"
-	AuthService_DeleteUser_FullMethodName   = "/auth.v1.AuthService/DeleteUser"
-	AuthService_ListRoles_FullMethodName    = "/auth.v1.AuthService/ListRoles"
-	AuthService_GetRole_FullMethodName      = "/auth.v1.AuthService/GetRole"
-	AuthService_CreateRole_FullMethodName   = "/auth.v1.AuthService/CreateRole"
-	AuthService_UpdateRole_FullMethodName   = "/auth.v1.AuthService/UpdateRole"
-	AuthService_DeleteRole_FullMethodName   = "/auth.v1.AuthService/DeleteRole"
+	AuthService_Login_FullMethodName          = "/auth.v1.AuthService/Login"
+	AuthService_Register_FullMethodName       = "/auth.v1.AuthService/Register"
+	AuthService_RefreshToken_FullMethodName   = "/auth.v1.AuthService/RefreshToken"
+	AuthService_Logout_FullMethodName         = "/auth.v1.AuthService/Logout"
+	AuthService_ListUsers_FullMethodName      = "/auth.v1.AuthService/ListUsers"
+	AuthService_GetUser_FullMethodName        = "/auth.v1.AuthService/GetUser"
+	AuthService_CreateUser_FullMethodName     = "/auth.v1.AuthService/CreateUser"
+	AuthService_UpdateUser_FullMethodName     = "/auth.v1.AuthService/UpdateUser"
+	AuthService_DeleteUser_FullMethodName     = "/auth.v1.AuthService/DeleteUser"
+	AuthService_ListRoles_FullMethodName      = "/auth.v1.AuthService/ListRoles"
+	AuthService_GetRole_FullMethodName        = "/auth.v1.AuthService/GetRole"
+	AuthService_CreateRole_FullMethodName     = "/auth.v1.AuthService/CreateRole"
+	AuthService_UpdateRole_FullMethodName     = "/auth.v1.AuthService/UpdateRole"
+	AuthService_DeleteRole_FullMethodName     = "/auth.v1.AuthService/DeleteRole"
+	AuthService_GetUsersSchema_FullMethodName = "/auth.v1.AuthService/GetUsersSchema"
+	AuthService_GetRolesSchema_FullMethodName = "/auth.v1.AuthService/GetRolesSchema"
 )
 
 // AuthServiceClient is the client API for AuthService service.
@@ -56,6 +58,9 @@ type AuthServiceClient interface {
 	CreateRole(ctx context.Context, in *CreateRoleRequest, opts ...grpc.CallOption) (*CreateRoleResponse, error)
 	UpdateRole(ctx context.Context, in *UpdateRoleRequest, opts ...grpc.CallOption) (*UpdateRoleResponse, error)
 	DeleteRole(ctx context.Context, in *DeleteRoleRequest, opts ...grpc.CallOption) (*DeleteRoleResponse, error)
+	// Schema — must be last so grpc-gateway prepends them first (highest match priority)
+	GetUsersSchema(ctx context.Context, in *GetUsersSchemaRequest, opts ...grpc.CallOption) (*GetUsersSchemaResponse, error)
+	GetRolesSchema(ctx context.Context, in *GetRolesSchemaRequest, opts ...grpc.CallOption) (*GetRolesSchemaResponse, error)
 }
 
 type authServiceClient struct {
@@ -206,6 +211,26 @@ func (c *authServiceClient) DeleteRole(ctx context.Context, in *DeleteRoleReques
 	return out, nil
 }
 
+func (c *authServiceClient) GetUsersSchema(ctx context.Context, in *GetUsersSchemaRequest, opts ...grpc.CallOption) (*GetUsersSchemaResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetUsersSchemaResponse)
+	err := c.cc.Invoke(ctx, AuthService_GetUsersSchema_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *authServiceClient) GetRolesSchema(ctx context.Context, in *GetRolesSchemaRequest, opts ...grpc.CallOption) (*GetRolesSchemaResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetRolesSchemaResponse)
+	err := c.cc.Invoke(ctx, AuthService_GetRolesSchema_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthServiceServer is the server API for AuthService service.
 // All implementations must embed UnimplementedAuthServiceServer
 // for forward compatibility.
@@ -227,6 +252,9 @@ type AuthServiceServer interface {
 	CreateRole(context.Context, *CreateRoleRequest) (*CreateRoleResponse, error)
 	UpdateRole(context.Context, *UpdateRoleRequest) (*UpdateRoleResponse, error)
 	DeleteRole(context.Context, *DeleteRoleRequest) (*DeleteRoleResponse, error)
+	// Schema — must be last so grpc-gateway prepends them first (highest match priority)
+	GetUsersSchema(context.Context, *GetUsersSchemaRequest) (*GetUsersSchemaResponse, error)
+	GetRolesSchema(context.Context, *GetRolesSchemaRequest) (*GetRolesSchemaResponse, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }
 
@@ -278,6 +306,12 @@ func (UnimplementedAuthServiceServer) UpdateRole(context.Context, *UpdateRoleReq
 }
 func (UnimplementedAuthServiceServer) DeleteRole(context.Context, *DeleteRoleRequest) (*DeleteRoleResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method DeleteRole not implemented")
+}
+func (UnimplementedAuthServiceServer) GetUsersSchema(context.Context, *GetUsersSchemaRequest) (*GetUsersSchemaResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetUsersSchema not implemented")
+}
+func (UnimplementedAuthServiceServer) GetRolesSchema(context.Context, *GetRolesSchemaRequest) (*GetRolesSchemaResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetRolesSchema not implemented")
 }
 func (UnimplementedAuthServiceServer) mustEmbedUnimplementedAuthServiceServer() {}
 func (UnimplementedAuthServiceServer) testEmbeddedByValue()                     {}
@@ -552,6 +586,42 @@ func _AuthService_DeleteRole_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AuthService_GetUsersSchema_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUsersSchemaRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).GetUsersSchema(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthService_GetUsersSchema_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).GetUsersSchema(ctx, req.(*GetUsersSchemaRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AuthService_GetRolesSchema_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetRolesSchemaRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).GetRolesSchema(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthService_GetRolesSchema_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).GetRolesSchema(ctx, req.(*GetRolesSchemaRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AuthService_ServiceDesc is the grpc.ServiceDesc for AuthService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -614,6 +684,14 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteRole",
 			Handler:    _AuthService_DeleteRole_Handler,
+		},
+		{
+			MethodName: "GetUsersSchema",
+			Handler:    _AuthService_GetUsersSchema_Handler,
+		},
+		{
+			MethodName: "GetRolesSchema",
+			Handler:    _AuthService_GetRolesSchema_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
