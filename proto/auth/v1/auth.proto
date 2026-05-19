@@ -91,18 +91,6 @@ service AuthService {
       delete: "/api/admin/roles/{id}"
     };
   }
-
-  // Schema — must be last so grpc-gateway prepends them first (highest match priority)
-  rpc GetUsersSchema(GetUsersSchemaRequest) returns (GetUsersSchemaResponse) {
-    option (google.api.http) = {
-      get: "/api/admin/users/schema"
-    };
-  }
-  rpc GetRolesSchema(GetRolesSchemaRequest) returns (GetRolesSchemaResponse) {
-    option (google.api.http) = {
-      get: "/api/admin/roles/schema"
-    };
-  }
 }
 
 // --- Auth ---
@@ -277,43 +265,4 @@ message RoleResponse {
   string name       = 2;
   string created_at = 3;
   string updated_at = 4;
-}
-
-// --- Schema ---
-
-message SchemaSelectOption {
-  string value = 1;
-  string label = 2;
-}
-
-message SchemaField {
-  string name         = 1;
-  string type         = 2;
-  string label        = 3;
-  bool   required     = 4;
-  bool   readonly     = 5;
-  bool   table_hidden = 6;
-  bool   edit_hidden  = 7;
-  bool   create_hidden = 8;
-  repeated SchemaSelectOption options = 9;
-}
-
-message GetUsersSchemaRequest {}
-
-// Response fields map directly to AdminSchema in the frontend.
-message GetUsersSchemaResponse {
-  string name          = 1;
-  string display_name  = 2;
-  repeated SchemaField fields     = 3;
-  repeated string      searchable = 4;
-}
-
-message GetRolesSchemaRequest {}
-
-// Response fields map directly to AdminSchema in the frontend.
-message GetRolesSchemaResponse {
-  string name          = 1;
-  string display_name  = 2;
-  repeated SchemaField fields     = 3;
-  repeated string      searchable = 4;
 }
