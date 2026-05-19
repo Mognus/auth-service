@@ -6,12 +6,12 @@ import (
 
 	"auth-service/internal/domain/users"
 
-	grpccrud "github.com/Mognus/go-grpc-crud/server"
+	"github.com/Mognus/go-grpc-crud/dbcrud"
 	"github.com/jackc/pgx/v5/pgconn"
 	"gorm.io/gorm"
 )
 
-var userListConfig = grpccrud.ListConfig{
+var userListConfig = dbcrud.ListConfig{
 	Preloads:        []string{"Role"},
 	Searchable:      []string{"email", "first_name", "last_name"},
 	Filterable:      []string{"id", "email", "firstName", "lastName", "active", "roleId"},
@@ -46,15 +46,15 @@ func NewUserService(db *gorm.DB) *UserService {
 }
 
 func (s *UserService) Get(ctx context.Context, id uint64) (users.User, error) {
-	return grpccrud.DefaultGet[users.User](ctx, s.db, id, "Role")
+	return dbcrud.DefaultGet[users.User](ctx, s.db, id, "Role")
 }
 
-func (s *UserService) List(ctx context.Context, req grpccrud.ListRequest) ([]users.User, int64, error) {
-	return grpccrud.DefaultList[users.User](ctx, s.db, req, userListConfig)
+func (s *UserService) List(ctx context.Context, req dbcrud.ListRequest) ([]users.User, int64, error) {
+	return dbcrud.DefaultList[users.User](ctx, s.db, req, userListConfig)
 }
 
 func (s *UserService) Create(ctx context.Context, input CreateUserInput) (*users.User, error) {
-	user, err := grpccrud.DefaultCreate(ctx, s.db, &users.User{
+	user, err := dbcrud.DefaultCreate(ctx, s.db, &users.User{
 		Email:     input.Email,
 		Password:  input.Password,
 		FirstName: input.FirstName,
@@ -84,11 +84,11 @@ func (s *UserService) Update(ctx context.Context, id uint64, input UpdateUserInp
 		updates["password"] = input.Password
 	}
 
-	return grpccrud.DefaultUpdate[users.User](ctx, s.db, id, updates, "Role")
+	return dbcrud.DefaultUpdate[users.User](ctx, s.db, id, updates, "Role")
 }
 
 func (s *UserService) Delete(ctx context.Context, id uint64) error {
-	return grpccrud.DefaultDelete(ctx, s.db, &users.User{}, id)
+	return dbcrud.DefaultDelete(ctx, s.db, &users.User{}, id)
 }
 
 func isUniqueConstraintViolation(err error, constraintName string) bool {

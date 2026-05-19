@@ -9,7 +9,7 @@ import (
 	"auth-service/internal/domain/users"
 	"auth-service/internal/service"
 
-	grpccrud "github.com/Mognus/go-grpc-crud/server"
+	"github.com/Mognus/go-grpc-crud/dbcrud"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"gorm.io/gorm"
@@ -27,7 +27,7 @@ func (h *Handler) GetUser(ctx context.Context, req *authv1.GetUserRequest) (*aut
 }
 
 func (h *Handler) ListUsers(ctx context.Context, req *authv1.ListUsersRequest) (*authv1.ListUsersResponse, error) {
-	result, total, err := h.userService.List(ctx, grpccrud.ListRequest{
+	result, total, err := h.userService.List(ctx, dbcrud.ListRequest{
 		Page: req.Page, Limit: req.Limit, Search: req.Search,
 		Filters: req.Filters, SortBy: req.SortBy, SortOrder: req.SortOrder,
 	})

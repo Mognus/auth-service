@@ -8,7 +8,7 @@ import (
 	authv1 "auth-service/gen/auth/v1"
 	"auth-service/internal/domain/roles"
 
-	grpccrud "github.com/Mognus/go-grpc-crud/server"
+	"github.com/Mognus/go-grpc-crud/dbcrud"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"gorm.io/gorm"
@@ -26,7 +26,7 @@ func (h *Handler) GetRole(ctx context.Context, req *authv1.GetRoleRequest) (*aut
 }
 
 func (h *Handler) ListRoles(ctx context.Context, req *authv1.ListRolesRequest) (*authv1.ListRolesResponse, error) {
-	result, total, err := h.roleService.List(ctx, grpccrud.ListRequest{
+	result, total, err := h.roleService.List(ctx, dbcrud.ListRequest{
 		Page: req.Page, Limit: req.Limit, Search: req.Search,
 		Filters: req.Filters, SortBy: req.SortBy, SortOrder: req.SortOrder,
 	})
