@@ -8,7 +8,3 @@ plugins:
     out: gen
     opt:
       - paths=source_relative
-  - remote: buf.build/grpc-ecosystem/gateway:v2.20.0
-    out: gen
-    opt:
-      - paths=source_relative
